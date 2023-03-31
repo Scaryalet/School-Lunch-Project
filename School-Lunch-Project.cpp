@@ -11,6 +11,9 @@ using namespace std;
 
 // structures here
 
+
+
+//Admin Structures
 struct LastOrder {
     string paymentMethod;
     vector<string> pastOrders;
@@ -28,6 +31,8 @@ struct Users {
 
 // vectors here
 
+
+//Admin Vectors
 vector <Users> userList;
 
 // admin function prototypes
@@ -40,12 +45,12 @@ void adminRemoveUsers();
 void printHeading();
 
 
-// put your prototypes here
+// put your Function prototypes here
 
 
 int main()
 {
-
+    //Josh's main function code goes here
 
    
 
@@ -58,6 +63,12 @@ int main()
 
 
 }
+//Defined Functions go here:
+
+
+
+
+
 
 //Admin functions defined:
 
@@ -69,9 +80,6 @@ void adminPullUserInfo() {
     string line;
     string fname, lname, username, password;
     int roomNum;
-
-
-
 
     if (users.is_open()) {
 
@@ -115,7 +123,8 @@ void adminMainScreen() {
 
     // main menu
     system("cls");
-    printHeading();
+    printHeading(); //calls function to print main heading
+
     cout << "Admin options" << endl;
     cout << "*************" << endl << endl;
     cout << "[1] Review Orders" << endl;
@@ -148,19 +157,18 @@ void adminMainScreen() {
 
     }
 
-
 }
 
-
+//Emma needs to add total calculating to this function, currently just prints a set amount.
 void adminReviewOrders() {
 
-    system("cls");
-    printHeading();
+    system("cls"); //clears screen
+    printHeading();//prints main heading
 
     cout << "Review Orders" << endl;
     cout << "*************" << endl << endl;
 
-    // choose from list of users
+    // Prints list of users to allow user to choose from
 
     for (int i = 0; i < userList.size(); i++) {
         cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
@@ -168,7 +176,7 @@ void adminReviewOrders() {
     cout << endl << endl << "Enter 1 to review a users order or 2 to go back to main menu: ";
 
     string choice;
-    cin.ignore();
+    cin.ignore(); //used to clear input stream for following getline code.
     getline(cin, choice);
 
     while (choice == "1" || choice == "2") {
@@ -195,24 +203,20 @@ void adminReviewOrders() {
                             cout << "no previous order found" << endl;
                         }
                     }
-                    cout << "Combo Discount: -$2" << endl;
+                    cout << "Combo Discount: -$2" << endl; //this needs to be finished once ordering system is complete.
                     cout << "Total: $10" << endl;
                     cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; // print payment method      
                 }
             }
         }
         else if (choice == "2") {
-            adminMainScreen();
+            adminMainScreen(); //returns user to main screen.
         }
-
-
     }
-    if (choice != "1" && choice != "2") {
+
+    if (choice != "1" && choice != "2") { //prevents user from putting in an incorrect value.
         cout << endl << "Please enter an appropriate value" << endl << endl;
     }
-
-
-
 
     // review another order or go back to main menu
     int option = NULL;
@@ -230,10 +234,7 @@ void adminReviewOrders() {
             cout << endl << "Enter an appropriate value" << endl << endl;
 
         }
-
     }
-
-
 }
 
 void adminAddUsers() {
@@ -266,8 +267,9 @@ void adminAddUsers() {
             usersToApprove.push_back(user);
         }
 
-        cin.ignore();
-    start:
+        cin.ignore(); // this is placed outside of the start, as it was only needed once to clear input stream.
+
+    start: //Jumps to here when wanting to approve/remove another user.
 
         // print headings
 
@@ -276,7 +278,7 @@ void adminAddUsers() {
         cout << "***************************" << endl << endl;
 
 
-
+        // Prints user list to console from vector.
         for (int i = 0; i < usersToApprove.size(); i++) {
             cout << usersToApprove[i].fName << " " << usersToApprove[i].lName << " Class Number: " << usersToApprove[i].classNum << endl;
         }
@@ -284,7 +286,7 @@ void adminAddUsers() {
         cout << endl << endl << "Enter First and Last names or enter 1 to return to main menu: ";
 
 
-        getline(cin, temp); //getline is used because using only cin would read the first word only, not both words.
+        getline(cin, temp); //getline used instead of cin because cin will only read the first word, not the whole line.
 
 
         ofstream file("users.txt", ios::app); //opens user.txt file to write new user to file.
@@ -301,7 +303,6 @@ void adminAddUsers() {
             }
 
             // APPROVE USER
-
             // add user to users.txt
 
             int found = 0; // 0 if false, 1 if true
@@ -356,7 +357,7 @@ void adminAddUsers() {
 
             if (temp == "2") {
                 system("cls");
-                goto start;
+                goto start; // Goes back to start to allow user to add/remove another user.
             }
         }
         file.close(); // close the file
@@ -377,8 +378,10 @@ void adminAddUsers() {
 
 
 void adminEditUsers() {
-start:
-    system("cls");
+start: //jumps to here if user wants to edit another user.
+    system("cls"); //clears screen
+
+    //Prints headings
     printHeading();
     cout << "Edit User Details" << endl;
     cout << "*****************" << endl << endl;
@@ -389,13 +392,13 @@ start:
         cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
     }
 
-    // menu
+    // Gives User option to enter name or return to menu
 
     cout << endl << endl << "Enter First and Last names or enter 1 to return to main menu: ";
     string temp;
     int found = 0;
 
-    cin.ignore();
+    cin.ignore(); //this is used to clear the input stream before using getline.
     getline(cin, temp);
     string first, last;
 
@@ -460,21 +463,19 @@ start:
                 case 6:
                     adminMainScreen();
 
-
-                    /// SAVE USERLISTS VECTOR TO FILE, OVERWRITE
-
                 }
             }
             else {
                 found = 0;
             }
         }
-        if (found == 0) {
-            cout << "No user found" << endl << endl;
+        if (found == 0) { //if name doesn't match, then prints no user found.
+            cout << "No user found, please check spelling" << endl << endl;
             system("pause");
-            goto start;
+            goto start; //returns to start of this function to allow user to re-enter and input.
         }
     }
+    // Overwriting the file by saving the vector contents to it.
 
     if (temp == "1") {
         ofstream file("users.txt", ios::trunc);
@@ -483,18 +484,12 @@ start:
             file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
                 userList[i].lastName << endl << userList[i].roomNum << endl << endl;
 
-
-
-            /// fix saving not working, fix no user found bug
-
         }
         file.close();
 
         adminMainScreen();
 
-
     }
-
 
 }
 
@@ -522,8 +517,9 @@ void adminRemoveUsers() {
         int found = 0;
 
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, temp);
+        getline(cin, temp); 
         string first, last;
+
         // split user input into two strings
 
         size_t pos = temp.find(' '); //finds the space

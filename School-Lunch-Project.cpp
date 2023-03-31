@@ -8,7 +8,8 @@ using namespace std;
 #include <string>
 
 
-// structs to hold users and their last order
+
+// structures here
 
 struct LastOrder {
     string paymentMethod;
@@ -25,10 +26,11 @@ struct Users {
 
 
 
-// vector to hold users from users.txt
+// vectors here
+
 vector <Users> userList;
 
-// admin functions declared
+// admin function prototypes
 void adminMainScreen();
 void adminReviewOrders();
 void adminPullUserInfo();
@@ -37,11 +39,18 @@ void adminEditUsers();
 void adminRemoveUsers();
 void printHeading();
 
-string temp;
+
+// put your prototypes here
+
+
 int main()
 {
-    adminPullUserInfo();
-    adminMainScreen();
+
+
+   
+
+
+    
 
 
 
@@ -228,7 +237,7 @@ void adminReviewOrders() {
 }
 
 void adminAddUsers() {
-
+    string temp;
     struct NewUser {
         string username;
         string password;

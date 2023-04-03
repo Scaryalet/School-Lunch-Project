@@ -11,10 +11,10 @@ struct CurrentOrder                           // Defining a struct called Curren
     int quantity;                             // Structure member type int
     double cost;                              // Structure member type double
 
-    CurrentOrder()
+    CurrentOrder(int a = 0 , double b = 0.00)     // Initialising quantity and cost members
     {
-        int quantity = NULL;
-        double cost = NULL;
+        quantity = a;
+        cost = b;
     }
 };
 
@@ -44,6 +44,7 @@ void processOrder();
 void printHeading();
 
 vector<double> itemPrices = {8.00, 6.50, 5.00, 6.00, 3.00, 4.00};        // Vector to store the item prices
+vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink"};
 
 int main()
 {
@@ -55,19 +56,24 @@ int main()
 void displayMenu(CurrentOrder& order)
 {
     int choice;
-
+  
     printHeading();                                               // Calls the printHeading() function to display application's heading
 
     cout << "Food Menu" << endl;
     cout << "*********\n" << endl;
 
     cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
-    cout << "[1] Sandwich\t\t$" << itemPrices[0] << endl;
+    for (int i = 0; i < itemNames.size(); i++) 
+    {
+        cout << "[" << i + 1 << "] " << itemNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << itemPrices[i] << endl;
+    }
+    
+    /*cout << "[1] Sandwich\t\t$" << itemPrices[0] << endl;
     cout << "[2] Hot Dog\t\t$" << itemPrices[1] << endl;
     cout << "[3] Chips\t\t$" << itemPrices[2] << endl;
     cout << "[4] Salad\t\t$" << itemPrices[3] << endl;
     cout << "[5] Water\t\t$" << itemPrices[4] << endl;
-    cout << "[6] Fizzy Drink\t\t$" << itemPrices[5] << endl;
+    cout << "[6] Fizzy Drink\t\t$" << itemPrices[5] << endl;*/
     cout << "[7] Combo Meal\n" << endl;
     cout << "[8] Cancel\n" << endl;
     cout << "Please choose an option: ";
@@ -178,6 +184,7 @@ void processOrder()
     displayTotal(total, count);
     secondMenu();
 }
+
 /*void comboMenu()
 {
     int choice;
@@ -213,7 +220,7 @@ void processOrder()
     cout << "[2] View Order Total\n" << endl;
     cout << "Please enter your choice: ";
     cin >> choice;
-
+    
     while (choice > 2 || choice < 1)
     {
         cout << "Please enter a valid choice: ";
@@ -256,11 +263,10 @@ void secondMenu()
         // include payment function
 
     case 2:
-        // go to previous menu or exit?
+        // go to user menu or exit?
         break;
     }
 }
-
 
 void printHeading()
 {

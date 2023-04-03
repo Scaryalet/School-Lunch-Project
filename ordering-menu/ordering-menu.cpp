@@ -69,7 +69,7 @@ void menu()
 {
     int choice;
 
-    // void printHeading()
+    // printHeading()
 
     cout << "Food Menu" << endl;
     cout << "*********\n" << endl;
@@ -134,7 +134,7 @@ void comboMenu()
 {
     int choice;
 
-    // void printHeading()
+    // printHeading()
 
     cout << "Combo Options" << endl;
     cout << "*************\n" << endl;
@@ -213,13 +213,19 @@ void orderTotal()
     int quantity;
     double cost, total = 0;
     ifstream order;
-    CurrentOrder newOrder;
 
-    order.open("order.txt", ios::in);
+    system("cls");
+    // printHeading()
+
+    cout << "Order Total" << endl;
+    cout << "***********\n" << endl;
+
+    order.open("order.txt", ios::in);                            // Pulling orders from order.txt
     if (order.is_open())
     {
         while (order >> item >> quantity >> cost)
         {
+            CurrentOrder newOrder;
             newOrder.item = item;
             newOrder.quantity = quantity;
             newOrder.cost = cost;
@@ -234,15 +240,15 @@ void orderTotal()
 
             cout << "Total: " << total;
             cout << endl;
-        }
-
-        order.close();
+        }   
+        
     }
 
     else
       cout << "Unable to retreive order\n";
       // enter function for main menu or food menu
 
+    order.close();
     secondMenu();
 }
 
@@ -250,12 +256,12 @@ void sandwich()
 {
     Items a;
     CurrentOrder newOrder;
-    fstream order;
+    ofstream order;
 
     cout << "How many sandwiches do you want to order?: ";
     cin >> newOrder.quantity;
 
-    order.open("order.txt", ios::out | ios::app);
+    order.open("order.txt", ios::out);
     newOrder.item = "Sandwich";
     newOrder.cost = a.sandwich * newOrder.quantity;
 
@@ -274,12 +280,12 @@ void hotDog()
 {
     Items a;
     CurrentOrder newOrder;
-    fstream order;
+    ofstream order;
 
     cout << "How many hot dogs do you want to order?: ";
     cin >> newOrder.quantity;
 
-    order.open("order.txt", ios::out | ios::app);
+    order.open("order.txt", ios::out);
     newOrder.item = "Hot Dog";
     newOrder.cost = a.hotDog * newOrder.quantity;
 
@@ -298,7 +304,7 @@ void chips()
 {
     Items a;
     CurrentOrder newOrder;
-    fstream order;
+    ofstream order;
 
     cout << "How many pottles of chips do you want to order?: ";
     cin >> newOrder.quantity;
@@ -321,7 +327,7 @@ void salad()
 {
     Items a;
     CurrentOrder newOrder;
-    fstream order;
+    ofstream order;
 
     cout << "How many salads do you want to order?: ";
     cin >> newOrder.quantity;
@@ -345,7 +351,7 @@ void water()
 {
     Items a;
     CurrentOrder newOrder;
-    fstream order;
+    ofstream order;
 
     cout << "How many hot dogs do you want to order?: ";
     cin >> newOrder.quantity;
@@ -369,7 +375,7 @@ void fizzyDrink()
 {
     Items a;
     CurrentOrder newOrder;
-    fstream order;
+    ofstream order;
 
     cout << "How many fizzy drinks do you want to order?: ";
     cin >> newOrder.quantity;

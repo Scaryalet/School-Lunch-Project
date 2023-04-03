@@ -142,24 +142,9 @@ void discountSearch()
 void displayOrder() {
     ifstream orderFile("order.txt");
     string line;
-
-
-int main()
-{
-    //Josh's main function code goes here
-
-   
-
-
-    
-
-
-    while (getline(orderFile, line)) {
-        cout << line << endl;
-    }
-
-    orderFile.close();
 }
+
+
 
 void payment() {
     string discount;

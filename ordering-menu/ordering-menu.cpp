@@ -5,57 +5,31 @@
 using namespace std;
 
  
-void menu();                                // Function prototypes
+                                   // Function prototypes
 void comboMenu();
 void orderMenu();
 void secondMenu();
-void orderTotal();
-void sandwich();
-void hotDog();
-void chips();
-void salad();
-void water(); 
-void fizzyDrink();
 
-struct Items                                 // Declaring a structure called Items, struct names (tag) should begin with an uppercase letter
-{
-    double sandwich;                         // Structure member type double
-    double hotDog;                           // Structure member type double
-    double chips;                            // Structure member type double
-    double salad;                            // Structure member type double
-    double water;                            // Structure member type double
-    double fizzyDrink;                       // Structure member type double
+void displayMenu(CurrentOrder& order);          // & is used to pass by reference                
+void saveOrder(CurrentOrder order);
+void displayOrder(CurrentOrder order);
+void displayTotal(double total, int count);
+void processOrder();
+void printHeading();
 
-    Items()                                  // Structure constructor to initilise members
-    {
-        sandwich = 8.00;                     // Initilising the structure members
-        hotDog = 6.50;
-        chips = 5.00;
-        salad = 6.00;
-        water = 3.00;
-        fizzyDrink = 4.00;
-    }
+
+struct CurrentOrder                           // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter
+{ 
+    string item;                              // Structure member type string
+    int quantity;                             // Structure member type int
+    double cost;                              // Structure member type double
 };
 
-struct UserInfo
+/*struct UserInfo
 {
     string name;
     string payment;
-    vector<Items> cost;
-};
-
-struct CurrentOrder
-{
-    string item;
-    int quantity;
-    double cost;
-
-    CurrentOrder(int a = 0, double b = 0)
-    {
-        quantity = a;
-        cost = b;
-    }
-};
+};*/
 
 /*struct Order
 {
@@ -64,23 +38,31 @@ struct CurrentOrder
     vector<Items> orderedItems;
 };*/
 
+vector<double> itemPrices = {8.00, 6.50, 5.00, 6.00, 3.00, 4.00};        // Vector to store the item prices
 
-void menu()
+int main()
+{
+    processOrder();
+
+    return 0;
+}
+
+void displayMenu(CurrentOrder& order)
 {
     int choice;
 
-    // printHeading()
+    printHeading();                                               // Calls the printHeading() function to display application's heading
 
     cout << "Food Menu" << endl;
     cout << "*********\n" << endl;
 
-    cout << "Item:\t\t\tCost:\n" << endl;
-    cout << "[1] Sandwich\t\t$8.00" << endl;
-    cout << "[2] Hot Dog\t\t$6.50" << endl;
-    cout << "[3] Chips\t\t$5.00" << endl;
-    cout << "[4] Salad\t\t$6.00" << endl;
-    cout << "[5] Water\t\t$3.00" << endl;
-    cout << "[6] Fizzy Drink\t\t$4.00" << endl;  
+    cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
+    cout << "[1] Sandwich\t\t$" << itemPrices[0] << endl;
+    cout << "[2] Hot Dog\t\t$" << itemPrices[1] << endl;
+    cout << "[3] Chips\t\t$" << itemPrices[2] << endl;
+    cout << "[4] Salad\t\t$" << itemPrices[3] << endl;
+    cout << "[5] Water\t\t$" << itemPrices[4] << endl;
+    cout << "[6] Fizzy Drink\t\t$" << itemPrices[5] << endl;
     cout << "[7] Combo Meal\n" << endl;
     cout << "[8] Cancel\n" << endl;
     cout << "Please choose an option: ";
@@ -96,41 +78,104 @@ void menu()
     switch (choice)
     {
     case 1:
-        sandwich();
+        order.item = "Sandwich";
+        order.cost = itemPrices[0];
         break;
 
     case 2:
-        hotDog();
+        order.item = "Hot Dog";
+        order.cost = itemPrices[1];
         break;
-    
-    case 3: 
-        chips();
+
+    case 3:
+        order.item = "Chips";
+        order.cost = itemPrices[2];
         break;
 
     case 4:
-        salad();
+        order.item = "Salad";
+        order.cost = itemPrices[3];
         break;
 
     case 5:
-        water();
+        order.item = "Water";
+        order.cost = itemPrices[4];
         break;
 
     case 6:
-        fizzyDrink();
+        order.item = "Fizzy Drink";
+        order.cost = itemPrices[5];
         break;
 
     case 7:
-        comboMenu();
+        // combo function
         break;
 
     case 8:
-        // Return to previous menu
+        // Return to previous menu, cancel
         break;
     }
 
+    cout << "Please entery quantity:"
+    cin >> order.quantity;
+
+    order.cost *= order.quantity;
 }
 
-void comboMenu()
+void saveOrder(CurrentOrder order)
+{
+    ofstream orderFile;
+    orderFile.open("order.txt", ios::app);
+    orderFile << orderFile.item << " " << orderFile.quantity << " " << fixed << orderFile.cost << endl; 
+    orderFile.close();
+}
+
+void displayOrder(CurrentOrder order)
+{
+    cout << endl;
+    cout << "Current Order\n" << endl; 
+    cout << "*************\n" << endl; 
+
+    cout << "Item: " << order.item << endl; 
+    cout << "Quantity: " << order.quantity << endl;
+    cout << "Cost: $" << fixed << order.cost << endl;                       // Fixed is used to ensure the format of the decimal point is diplayed correctly 
+    cout << endl; 
+}
+
+void displayTotal(double total, int count)
+{
+    cout << "Total cost: $" << fixed << total << endl;
+    cout << "Number of orders: " << count << endl;
+}
+
+void processOrder()
+{
+    CurrentOrder order;
+    double total = 0;
+    int count = 0;
+    char repeat;
+
+    do
+    {
+        displayMenu(order);
+        saveOrder(order);
+        displayOrder(order);
+
+        total += order.cost;
+        count++;
+
+        cout << "Do you want to add another item? (y/n) ";
+        cin >> repeat;
+
+        if (repeat == 'n' || repeat == 'N')
+        {
+            void secondMenu();
+        }
+
+    } while (repeat == 'y' || repeat == 'Y');
+
+}
+/*void comboMenu()
 {
     int choice;
 
@@ -154,9 +199,9 @@ void comboMenu()
         cout << "Please enter a valid choice: ";
         cin >> choice;
     }
-}
+}*/
 
-void orderMenu()
+/*void orderMenu()
 {
     int choice;
 
@@ -166,19 +211,24 @@ void orderMenu()
     cout << "Please enter your choice: ";
     cin >> choice;
 
+    while (choice > 2 || choice < 1)
+    {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
+    }
+
     if (choice == 1)
     {
-        menu();
+        displayMenu(order);
     }
 
     else if (choice == 2)
     {
-        orderTotal();
+        displayOrder(order);
+        displayTotal(total, count);
+        secondMenu();
     }
-
-    else
-        cout << "Wrong selection, please choose again: ";
-}
+}*/
 
 void secondMenu()
 {
@@ -192,13 +242,19 @@ void secondMenu()
     cin >> choice;
     cout << endl;
 
+    while (choice > 3 || choice < 1)
+    {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
+    }
+
     switch (choice)
     {
     case 1:
         // include payment function
 
     case 2:
-        menu();
+        processOrder();
         break;
 
     case 3:
@@ -207,198 +263,12 @@ void secondMenu()
     }
 }
 
-void orderTotal()
+
+void printHeading()
 {
-    string item;
-    int quantity;
-    double cost, total = 0;
-    ifstream order;
-
-    system("cls");
-    // printHeading()
-
-    cout << "Order Total" << endl;
-    cout << "***********\n" << endl;
-
-    order.open("order.txt", ios::in);                            // Pulling orders from order.txt
-    if (order.is_open())
-    {
-        while (order >> item >> quantity >> cost)
-        {
-            CurrentOrder newOrder;
-            newOrder.item = item;
-            newOrder.quantity = quantity;
-            newOrder.cost = cost;
-
-            cout << endl;
-            cout << "Item: " << newOrder.item << endl;
-            cout << "Quantity: " << newOrder.quantity << endl;
-            cout << "Cost: " << newOrder.cost << endl;
-            cout << endl;
-
-            total += newOrder.cost;
-
-            cout << "Total: " << total;
-            cout << endl;
-        }   
-        
-    }
-
-    else
-      cout << "Unable to retreive order\n";
-      // enter function for main menu or food menu
-
-    order.close();
-    secondMenu();
-}
-
-void sandwich()
-{
-    Items a;
-    CurrentOrder newOrder;
-    ofstream order;
-
-    cout << "How many sandwiches do you want to order?: ";
-    cin >> newOrder.quantity;
-
-    order.open("order.txt", ios::out);
-    newOrder.item = "Sandwich";
-    newOrder.cost = a.sandwich * newOrder.quantity;
-
-    order << newOrder.item << endl;
-    order << newOrder.quantity << endl;
-    order << newOrder.cost << endl;
-    order.close();
-
     cout << endl;
-    cout << "Thank you, you've added " << newOrder.quantity << " sandwich/es to your order\n" << endl;
-
-    orderMenu();
-}
-
-void hotDog()
-{
-    Items a;
-    CurrentOrder newOrder;
-    ofstream order;
-
-    cout << "How many hot dogs do you want to order?: ";
-    cin >> newOrder.quantity;
-
-    order.open("order.txt", ios::out);
-    newOrder.item = "Hot Dog";
-    newOrder.cost = a.hotDog * newOrder.quantity;
-
-    order << newOrder.item << endl;
-    order << newOrder.quantity << endl;
-    order << newOrder.cost << endl;
-    order.close();
-
+    cout << "****************************\n";
+    cout << "School Lunch Ordering System\n";
+    cout << "****************************\n";
     cout << endl;
-    cout << "Thank you, you've added " << newOrder.quantity << " hot dog/s to your order\n" << endl;
-
-    orderMenu();
-}
-
-void chips()
-{
-    Items a;
-    CurrentOrder newOrder;
-    ofstream order;
-
-    cout << "How many pottles of chips do you want to order?: ";
-    cin >> newOrder.quantity;
-
-    order.open("order.txt", ios::out | ios::app);
-    newOrder.item = "Chips";
-    newOrder.cost = a.chips * newOrder.quantity;
-
-    order << newOrder.item << endl;
-    order << newOrder.quantity << endl;
-    order << newOrder.cost << endl;
-    order.close();
-
-    cout << endl;
-    cout << "Thank you, you've added " << newOrder.quantity << " pottles of chips to your order\n" << endl;
-
-    orderMenu();
-}
-void salad()
-{
-    Items a;
-    CurrentOrder newOrder;
-    ofstream order;
-
-    cout << "How many salads do you want to order?: ";
-    cin >> newOrder.quantity;
-
-    order.open("order.txt", ios::out | ios::app);
-    newOrder.item = "Salad";
-    newOrder.cost = a.salad * newOrder.quantity;
-
-    order << newOrder.item << endl;
-    order << newOrder.quantity << endl;
-    order << newOrder.cost << endl;
-    order.close();
-
-    cout << endl;
-    cout << "Thank you, you've added " << newOrder.quantity << " salad/s to your order\n" << endl;
-
-    orderMenu();
-}
-
-void water()
-{
-    Items a;
-    CurrentOrder newOrder;
-    ofstream order;
-
-    cout << "How many hot dogs do you want to order?: ";
-    cin >> newOrder.quantity;
-
-    order.open("order.txt", ios::out | ios::app);
-    newOrder.item = "Water";
-    newOrder.cost = a.water * newOrder.quantity;
-
-    order << newOrder.item << endl;
-    order << newOrder.quantity << endl;
-    order << newOrder.cost << endl;
-    order.close();
-
-    cout << endl;
-    cout << "Thank you, you've added " << newOrder.quantity << " water/s to your order\n" << endl;
-
-    orderMenu();
-}
-
-void fizzyDrink()
-{
-    Items a;
-    CurrentOrder newOrder;
-    ofstream order;
-
-    cout << "How many fizzy drinks do you want to order?: ";
-    cin >> newOrder.quantity;
-
-    order.open("order.txt", ios::out | ios::app);
-    newOrder.item = "Fizzy Drink";
-    newOrder.cost = a.fizzyDrink * newOrder.quantity;
-
-    order << newOrder.item << endl;
-    order << newOrder.quantity << endl;
-    order << newOrder.cost << endl;
-    order.close();
-
-    cout << endl;
-    cout << "Thank you, you've added " << newOrder.quantity << " fizzy drink/s to your order\n" << endl;
-
-    orderMenu();
-}
-
-
-int main()
-{ 
-    menu();
-    
-    return 0;
 }

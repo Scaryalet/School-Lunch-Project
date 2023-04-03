@@ -2,27 +2,20 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <iomanip>
 using namespace std;
 
- 
-                                   // Function prototypes
-void comboMenu();
-void orderMenu();
-void secondMenu();
-
-void displayMenu(CurrentOrder& order);          // & is used to pass by reference                
-void saveOrder(CurrentOrder order);
-void displayOrder(CurrentOrder order);
-void displayTotal(double total, int count);
-void processOrder();
-void printHeading();
-
-
 struct CurrentOrder                           // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter
-{ 
+{
     string item;                              // Structure member type string
     int quantity;                             // Structure member type int
     double cost;                              // Structure member type double
+
+    CurrentOrder()
+    {
+        int quantity = NULL;
+        double cost = NULL;
+    }
 };
 
 /*struct UserInfo
@@ -37,6 +30,18 @@ struct CurrentOrder                           // Defining a struct called Curren
     string paymentType;
     vector<Items> orderedItems;
 };*/
+
+                                          
+//void comboMenu();                                // Function prototypes
+//void orderMenu();
+void secondMenu();
+
+void displayMenu(CurrentOrder& order);          // & is used to pass by reference                
+void saveOrder(CurrentOrder order);
+void displayOrder(CurrentOrder order);
+void displayTotal(double total, int count);
+void processOrder();
+void printHeading();
 
 vector<double> itemPrices = {8.00, 6.50, 5.00, 6.00, 3.00, 4.00};        // Vector to store the item prices
 
@@ -116,7 +121,7 @@ void displayMenu(CurrentOrder& order)
         break;
     }
 
-    cout << "Please entery quantity:"
+    cout << "Please enter quantity: ";
     cin >> order.quantity;
 
     order.cost *= order.quantity;
@@ -125,25 +130,26 @@ void displayMenu(CurrentOrder& order)
 void saveOrder(CurrentOrder order)
 {
     ofstream orderFile;
-    orderFile.open("order.txt", ios::app);
-    orderFile << orderFile.item << " " << orderFile.quantity << " " << fixed << orderFile.cost << endl; 
+    orderFile.open("order.txt", ios::out | ios::app);
+    orderFile << order.item << " " << order.quantity << " " << fixed << order.cost << endl; 
     orderFile.close();
 }
 
 void displayOrder(CurrentOrder order)
 {
     cout << endl;
-    cout << "Current Order\n" << endl; 
+    cout << "Current Order" << endl; 
     cout << "*************\n" << endl; 
 
     cout << "Item: " << order.item << endl; 
     cout << "Quantity: " << order.quantity << endl;
-    cout << "Cost: $" << fixed << order.cost << endl;                       // Fixed is used to ensure the format of the decimal point is diplayed correctly 
+    cout << "Cost: $" << fixed << setprecision(2) << order.cost << endl;                       // Fixed is used to ensure the format of the decimal point is diplayed correctly 
     cout << endl; 
 }
 
 void displayTotal(double total, int count)
 {
+    cout << endl; 
     cout << "Total cost: $" << fixed << total << endl;
     cout << "Number of orders: " << count << endl;
 }
@@ -167,13 +173,10 @@ void processOrder()
         cout << "Do you want to add another item? (y/n) ";
         cin >> repeat;
 
-        if (repeat == 'n' || repeat == 'N')
-        {
-            void secondMenu();
-        }
-
     } while (repeat == 'y' || repeat == 'Y');
 
+    displayTotal(total, count);
+    secondMenu();
 }
 /*void comboMenu()
 {
@@ -236,8 +239,7 @@ void secondMenu()
     cout << endl;
     cout << "How would you like to proceed?\n" << endl;
     cout << "[1] Continue to Payment" << endl;
-    cout << "[2] Add to Order" << endl;
-    cout << "[3] Cancel Order\n" << endl;
+    cout << "[2] Cancel Order\n" << endl;
     cout << "Please enter your choice: ";
     cin >> choice;
     cout << endl;
@@ -254,10 +256,6 @@ void secondMenu()
         // include payment function
 
     case 2:
-        processOrder();
-        break;
-
-    case 3:
         // go to previous menu or exit?
         break;
     }

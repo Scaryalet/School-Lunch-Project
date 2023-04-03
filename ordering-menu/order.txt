@@ -7,3 +7,19 @@ Sandwich
 Sandwich
 1
 8
+Sandwich 12 96.000000
+Sandwich 12 96.000000
+Hot Dog 2 13.000000
+Sandwich 12 96.000000
+Fizzy Drink 5 20.000000
+Water 5 15.000000
+Hot Dog 2 13.000000
+Chips 3 15.000000
+Hot Dog 12 78.000000
+Water 2 6.000000
+Sandwich 12 96.000000
+Hot Dog 2 13.000000
+Sandwich 12 96.000000
+Chips 5 25.000000
+Chips 3 15.000000
+Water 5 15.000000

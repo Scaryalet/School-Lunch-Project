@@ -1,1 +1,2 @@
 C:\Users\Tanis\OneDrive\Desktop\ordering-menu\x64\Debug\ordering-menu.exe
+C:\Users\Tanis\source\repos\Scaryalet\School-Lunch-Project\ordering-menu\x64\Debug\ordering-menu.exe

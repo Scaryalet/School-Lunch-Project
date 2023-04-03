@@ -8,9 +8,15 @@ using namespace std;
 #include <string>
 
 
+
 int choice;
 bool found = false;
 // structures here
+
+
+
+// structures here
+
 
 
 
@@ -47,6 +53,7 @@ void printHeading();
 
 
 // put your Function prototypes here
+
 
 // signup-login function prototypes
 void createAccount();
@@ -135,6 +142,17 @@ void discountSearch()
 void displayOrder() {
     ifstream orderFile("order.txt");
     string line;
+
+
+int main()
+{
+    //Josh's main function code goes here
+
+   
+
+
+    
+
 
     while (getline(orderFile, line)) {
         cout << line << endl;
@@ -228,6 +246,12 @@ void createAccount()
 
     cout << "Account created successfully.\n";
 }
+//Defined Functions go here:
+
+
+
+
+
 
 void successfulLogin()
 {
@@ -792,7 +816,7 @@ void adminRemoveUsers() {
         int found = 0;
 
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, temp);
+        getline(cin, temp); 
         string first, last;
 
         // split user input into two strings

@@ -9,7 +9,14 @@ using namespace std;
 
 
 
+int choice;
+bool found = false;
 // structures here
+
+
+
+// structures here
+
 
 
 
@@ -48,6 +55,95 @@ void printHeading();
 // put your Function prototypes here
 
 
+// signup-login function prototypes
+void createAccount();
+void successfulLogin();
+void login();
+void adminLogin();
+
+// Payment function prototypes
+void discountSearch();
+void displayOrder();
+void payment();
+
+int main()
+{
+    cout << "*********************************************\n";
+    cout << "WELCOME TO THE SCHOOLS LUNCH ORDERING SYSTEM!\n";
+    cout << "*********************************************\n\n";
+
+    do {
+        cout << "Please choose an option: \n";
+        cout << "1. Create an account \n";
+        cout << "2. Parent/Student Login \n";
+        cout << "3. Admin login \n";
+        cout << "4. Exit \n\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            createAccount();
+            break;
+
+        case 2:
+            login();
+            break;
+
+        case 3:
+            adminLogin();
+            break;
+
+        case 4:
+            cout << "Exiting program...\n";
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again.\n";
+            break;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
+
+//Defined Functions go here:
+
+// payment functions defined:
+void discountSearch()
+{
+    string discount;
+    ifstream infile("discountCodes.txt");
+    if (infile)
+    {
+        string line;
+
+        while (getline(infile, line))
+        {
+            if (line.find(discount) != string::npos)
+            {
+                found = true;
+                // Code to apply discount goes here, Waiting on orderTotal function.
+                cout << "A 15% discount has been applied to your order!\n\n";
+                break;
+            }
+        }
+
+        infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid discount code, Please try again.\n\n";
+    }
+}
+
+void displayOrder() {
+    ifstream orderFile("order.txt");
+    string line;
+
+
 int main()
 {
     //Josh's main function code goes here
@@ -58,14 +154,217 @@ int main()
     
 
 
+    while (getline(orderFile, line)) {
+        cout << line << endl;
+    }
 
+    orderFile.close();
+}
 
+void payment() {
+    string discount;
+    string cardNumber;
+    int cvc;
 
+    do {
+        cout << "****************************\n";
+        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
+        cout << "****************************\n\n";
 
+        cout << "Payment options \n";
+        cout << "*************** \n\n";
+
+        cout << "Your order: \n";
+        displayOrder();
+        cout << "Total cost: \t \t" << "\n\n";//total cost either calculated here or within displayOrder function.
+
+        cout << "[1] Enter discount code \n";
+        cout << "[2] Pay with cash \n";
+        cout << "[3] Pay with card \n";
+
+        cout << "Please select an option: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            cout << "Use discount code YouGetAnA+ for 15% off your order! \n";
+            cout << "Please enter your discount code: \n";
+            cin >> discount;
+            discountSearch();
+            break;
+
+        case 2:
+            cout << "Please make your payment when collecting your order from the lunchroom\n\n";
+            void successfulLogin();
+            break;
+
+        case 3:
+            cout << "please enter your card number: \n";
+            cin >> cardNumber;
+            cout << "please enter your cvc number: \n";
+            cin >> cvc;
+            cout << "Your payment has been successful! Please collect your order from the lunchroom at lunch time.\n\n";
+            void successfulLogin();
+            break;
+
+        default:
+            cout << "Invalid choice, Please try again.\n";
+            break;
+
+        }
+    } while (choice != 3);
+}
+
+//signup-login functions defined:
+void createAccount()
+{
+    string firstName;
+    string lastName;
+    string classroom;
+    string username;
+    string password;
+
+    // User details
+    cout << "\n\n";
+    cout << "CREATE A NEW ACCOUNT \n";
+    cout << "Please enter your first name: ";
+    cin >> firstName;
+    cout << "Please enter your last name: ";
+    cin >> lastName;
+    cout << "Please enter the students classroom number: ";
+    cin >> classroom;
+    cout << "Please enter a username: ";
+    cin >> username;
+    cout << "Please enter a password: ";
+    cin >> password;
+
+    // Open file and append user details
+    ofstream outfile("newUsers.txt", ios::app);
+    outfile << firstName << "," << lastName << "," << classroom << "," << username << "," << password << endl;
+    outfile.close();
+
+    cout << "Account created successfully.\n";
 }
 //Defined Functions go here:
 
 
+
+
+
+
+void successfulLogin()
+{
+    do {
+        cout << "****************************\n";
+        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
+        cout << "****************************\n\n";
+
+        cout << "Welcome \n\n";
+
+        cout << "[1] Create new order \n";
+        cout << "[2] Exit \n\n";
+
+        cout << "Please select an option: \n";
+        cin >> choice;
+
+
+        switch (choice)
+        {
+        case 1:
+            //Tanisha's order menu function here
+            break;
+
+        case 2:
+            cout << "Exiting program...\n";
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again.\n";
+            break;
+        }
+    } while (choice != 2);
+}
+
+// Function to log in to an existing account
+void login()
+{
+    string username;
+    string password;
+    bool found = false;
+
+    // Get user details for login
+    cout << "\n\n";
+    cout << "LOG IN TO AN EXISTING ACCOUNT\n";
+    cout << "Please enter your username: ";
+    cin >> username;
+    cout << "Please enter your password: ";
+    cin >> password;
+
+    // Open file to find login
+    ifstream infile("newUsers.txt");
+    if (infile)
+    {
+        string line;
+
+        while (getline(infile, line))
+        {
+            if (line.find(username + "," + password) != string::npos)
+            {
+                found = true;
+                cout << "Login successful.\n";
+                successfulLogin();
+                break;
+            }
+        }
+
+        infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid username or password. Please try again.\n";
+    }
+}
+
+// Function for admin login
+void adminLogin()
+{
+    string username;
+    string password;
+    bool found = false;
+
+    // Get user details for login
+    cout << "\n LOG IN TO AN EXISTING ACCOUNT \n";
+    cout << "Please enter your username: ";
+    cin >> username;
+    cout << "Please enter your password: ";
+    cin >> password;
+
+    // Open file to find login
+    ifstream infile("admin.txt");
+    if (infile)
+    {
+        string line;
+
+        while (getline(infile, line))
+        {
+            if (line.find(username + "," + password) != string::npos)
+            {
+                found = true;
+                cout << "Login successful.\n";
+                break;
+            }
+        }
+
+        infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid username or password. Please try again.\n";
+    }
+}
 
 
 

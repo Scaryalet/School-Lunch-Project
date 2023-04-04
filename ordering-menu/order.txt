@@ -25,3 +25,27 @@ Chips 3 15.000000
 Water 5 15.000000
 Chips 3 15.000000
 Hot Dog 2 13.000000
+Hot Dog 12 78.00
+Chips 5 25.00
+Sandwich 12 96.00
+Chips 3 15.00
+Sandwich 12 96.00
+Chips 5 25.00
+Water 23 69.00
+Sandwich 2 16.00
+Hot Dog 4 26.00
+Hot Dog 3 19.50
+Fizzy Drink 5 20.00
+Hot Dog 2 13.00
+Sandwich 12 96.00
+Hot Dog 5 32.50
+Water 5 15.00
+Hot Dog 2 13.00
+Hot Dog 2 13.00
+Water 5 15.00
+Water 5 15.00
+Chips 3 15.00
+Sandwich 2 16.00
+Chips 3 15.00
+Hot Dog 2 13.00
+Salad 5 30.00

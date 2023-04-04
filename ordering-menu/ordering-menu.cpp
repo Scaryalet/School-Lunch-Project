@@ -3,13 +3,14 @@
 #include <vector>
 #include <string>
 #include <iomanip>
+
 using namespace std;
 
-struct CurrentOrder                           // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter
+struct CurrentOrder                               // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter
 {
-    string item;                              // Structure member type string
-    int quantity;                             // Structure member type int
-    double cost;                              // Structure member type double
+    string item;                                  // Structure member type string
+    int quantity;                                 // Structure member type int
+    double cost;                                  // Structure member type double
 
     CurrentOrder(int a = 0 , double b = 0.00)     // Initialising quantity and cost members
     {
@@ -32,19 +33,20 @@ struct CurrentOrder                           // Defining a struct called Curren
 };*/
 
                                           
-//void comboMenu();                                // Function prototypes
+//void comboMenu();                                                       // Function prototypes
 //void orderMenu();
 void secondMenu();
 
-void displayMenu(CurrentOrder& order);          // & is used to pass by reference                
-void saveOrder(CurrentOrder order);
-void displayOrder(CurrentOrder order);
-void displayTotal(double total, int count);
+void displayMenu(CurrentOrder& order);                                    // & is used to pass by reference                
+void saveOrder(CurrentOrder& order, vector<CurrentOrder>& orders);
+void displayOrder(CurrentOrder& order);
+void orderSummary(vector<CurrentOrder>& orders);
+void displayTotal(double total);
 void processOrder();
 void printHeading();
 
-vector<double> itemPrices = {8.00, 6.50, 5.00, 6.00, 3.00, 4.00};        // Vector to store the item prices
-vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink"};
+vector<double> itemPrices = {8.00, 6.50, 5.00, 6.00, 3.00, 4.00};                                          // Vector to store the item prices
+vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink"};             // Vector to store item names
 
 int main()
 {
@@ -68,12 +70,6 @@ void displayMenu(CurrentOrder& order)
         cout << "[" << i + 1 << "] " << itemNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << itemPrices[i] << endl;
     }
     
-    /*cout << "[1] Sandwich\t\t$" << itemPrices[0] << endl;
-    cout << "[2] Hot Dog\t\t$" << itemPrices[1] << endl;
-    cout << "[3] Chips\t\t$" << itemPrices[2] << endl;
-    cout << "[4] Salad\t\t$" << itemPrices[3] << endl;
-    cout << "[5] Water\t\t$" << itemPrices[4] << endl;
-    cout << "[6] Fizzy Drink\t\t$" << itemPrices[5] << endl;*/
     cout << "[7] Combo Meal\n" << endl;
     cout << "[8] Cancel\n" << endl;
     cout << "Please choose an option: ";
@@ -127,62 +123,117 @@ void displayMenu(CurrentOrder& order)
         break;
     }
 
-    cout << "Please enter quantity: ";
-    cin >> order.quantity;
-
-    order.cost *= order.quantity;
+    if (choice >= 1 && choice <= 6)
+    {
+        cout << "Please enter quantity: ";
+        cin >> order.quantity;
+        order.cost *= order.quantity;
+    } 
 }
 
-void saveOrder(CurrentOrder order)
+void saveOrder(CurrentOrder& order, vector<CurrentOrder>& orders)
 {
+    orders.push_back(order);                                                   // Adds the new order to the vector
     ofstream orderFile;
     orderFile.open("order.txt", ios::out | ios::app);
-    orderFile << order.item << " " << order.quantity << " " << fixed << order.cost << endl; 
+    orderFile << order.item << " " << order.quantity << " " << fixed << setprecision(2) << order.cost << endl; 
     orderFile.close();
 }
 
-void displayOrder(CurrentOrder order)
+void displayOrder(CurrentOrder& order)
 {
     cout << endl;
-    cout << "Current Order" << endl; 
-    cout << "*************\n" << endl; 
-
     cout << "Item: " << order.item << endl; 
     cout << "Quantity: " << order.quantity << endl;
-    cout << "Cost: $" << fixed << setprecision(2) << order.cost << endl;                       // Fixed is used to ensure the format of the decimal point is diplayed correctly 
-    cout << endl; 
+    cout << "Cost: $" << fixed << setprecision(2) << order.cost << endl;                       // Fixed + setprecision is used to ensure the format of the decimal point is diplayed correctly   
 }
 
-void displayTotal(double total, int count)
+void displayTotal(double total)
+{ 
+    cout << endl;
+    cout << "******************" << endl; 
+    cout << "Total cost: $" << fixed << setprecision(2) << total << endl;
+    cout << "******************" << endl;
+}
+
+void orderSummary(vector<CurrentOrder>& orders)
 {
-    cout << endl; 
-    cout << "Total cost: $" << fixed << total << endl;
-    cout << "Number of orders: " << count << endl;
+    cout << endl;
+    cout << "*************\n";
+    cout << "Order Summary" << endl;
+    cout << "*************\n";
+
+    for (int i = 0; i < orders.size(); i++) 
+    {
+        displayOrder(orders[i]);
+    }
 }
 
 void processOrder()
 {
-    CurrentOrder order;
+    vector<CurrentOrder> orders;
     double total = 0;
     int count = 0;
     char repeat;
 
     do
     {
+        CurrentOrder order;
         displayMenu(order);
-        saveOrder(order);
+        saveOrder(order, orders);
         displayOrder(order);
 
         total += order.cost;
         count++;
 
+        cout << endl;
         cout << "Do you want to add another item? (y/n) ";
         cin >> repeat;
 
     } while (repeat == 'y' || repeat == 'Y');
 
-    displayTotal(total, count);
+    orderSummary(orders);
+    displayTotal(total);
     secondMenu();
+}
+
+void secondMenu()
+{
+    int choice;
+    cout << endl;
+    cout << "How would you like to proceed?\n" << endl;
+    cout << "[1] Continue to Payment" << endl;
+    cout << "[2] Cancel Order\n" << endl;
+    cout << "Please enter your choice: ";
+    cin >> choice;
+    cout << endl;
+
+    while (choice > 3 || choice < 1)
+    {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
+    }
+
+    switch (choice)
+    {
+    case 1:
+        // include payment function
+        break;
+
+    case 2:
+        // go to user menu or exit?
+        cout << "Goodbye....";
+        break;
+    }
+}
+
+void printHeading()
+{
+    cout << endl;
+    cout << "****************************\n";
+    cout << "School Lunch Ordering System\n";
+    cout << "****************************\n";
+    cout << endl;
 }
 
 /*void comboMenu()
@@ -220,7 +271,7 @@ void processOrder()
     cout << "[2] View Order Total\n" << endl;
     cout << "Please enter your choice: ";
     cin >> choice;
-    
+
     while (choice > 2 || choice < 1)
     {
         cout << "Please enter a valid choice: ";
@@ -239,40 +290,3 @@ void processOrder()
         secondMenu();
     }
 }*/
-
-void secondMenu()
-{
-    int choice;
-    cout << endl;
-    cout << "How would you like to proceed?\n" << endl;
-    cout << "[1] Continue to Payment" << endl;
-    cout << "[2] Cancel Order\n" << endl;
-    cout << "Please enter your choice: ";
-    cin >> choice;
-    cout << endl;
-
-    while (choice > 3 || choice < 1)
-    {
-        cout << "Please enter a valid choice: ";
-        cin >> choice;
-    }
-
-    switch (choice)
-    {
-    case 1:
-        // include payment function
-
-    case 2:
-        // go to user menu or exit?
-        break;
-    }
-}
-
-void printHeading()
-{
-    cout << endl;
-    cout << "****************************\n";
-    cout << "School Lunch Ordering System\n";
-    cout << "****************************\n";
-    cout << endl;
-}

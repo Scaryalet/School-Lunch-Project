@@ -1,18 +1,18 @@
-#include <iostream>
+#include <iostream>                               // Libraries to be used
 #include <fstream>
 #include <vector>
 #include <string>
 #include <iomanip>
 
-using namespace std;
+using namespace std;                               // Using the standard namespace
 
-struct CurrentOrder                               // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter
+struct CurrentOrder                                // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter)
 {
-    string item;                                  // Structure member type string
-    int quantity;                                 // Structure member type int
-    double cost;                                  // Structure member type double
+    string item;                                   // Structure member type string
+    int quantity;                                  // Structure member type int
+    double cost;                                   // Structure member type double
 
-    CurrentOrder(int a = 0 , double b = 0.00)     // Initialising quantity and cost members
+    CurrentOrder(int a = 0 , double b = 0.00)      // Initialising quantity and cost members with default constructor 
     {
         quantity = a;
         cost = b;
@@ -29,60 +29,64 @@ struct CurrentOrder                               // Defining a struct called Cu
 {
     string userName;
     string paymentType;
-    vector<Items> orderedItems;
 };*/
 
-                                          
-//void comboMenu();                                                       // Function prototypes
-//void orderMenu();
-void secondMenu();
-
-void displayMenu(CurrentOrder& order);                                    // & is used to pass by reference                
-void saveOrder(CurrentOrder& order, vector<CurrentOrder>& orders);
+void printHeading();                                                     // Function prototypes
+void displayMenu(CurrentOrder& order);                                   // '&' is used to pass by reference. Changes made to 'order' within the 'displayMenu' function will affect the CurrentOrder struct            
+void saveOrder(CurrentOrder& order, vector<CurrentOrder>& orders);         
 void displayOrder(CurrentOrder& order);
 void orderSummary(vector<CurrentOrder>& orders);
 void displayTotal(double total);
 void processOrder();
-void printHeading();
+void secondMenu();
 
-vector<double> itemPrices = {8.00, 6.50, 5.00, 6.00, 3.00, 4.00};                                          // Vector to store the item prices
-vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink"};             // Vector to store item names
+vector<double> itemPrices = { 8.00, 6.50, 5.00, 6.00, 3.00, 4.00 };                                      // Vector to store the item prices
+vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink" };          // Vector to store item names
 
-int main()
+int main()                                        // The main() function is specified before the other declared functions
 {
-    processOrder();
+    processOrder();                               // Calls the processOrder() function
 
     return 0;
 }
 
-void displayMenu(CurrentOrder& order)
+void printHeading()                               // The printHeading() function displays a custom heading when it is called in the program
 {
-    int choice;
-  
-    printHeading();                                               // Calls the printHeading() function to display application's heading
+    cout << endl;
+    cout << "****************************\n";
+    cout << "School Lunch Ordering System\n";
+    cout << "****************************\n";
+    cout << endl;
+}
 
-    cout << "Food Menu" << endl;
+void displayMenu(CurrentOrder& order)                           // The displayMenu() function displays the menu options and prices by calling their respective vectors 
+{ 
+    int choice;                                                 // Declaring the variable 'choice' to store the user's input
+    
+    printHeading();                                             // Calls the printHeading() function to display the 'school lunch ordering' heading
+     
+    cout << "Food Menu" << endl;                                // Food menu heading
     cout << "*********\n" << endl;
 
-    cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
-    for (int i = 0; i < itemNames.size(); i++) 
+    cout << "Item:\t\t\tCost:\n" << endl;                       // Displays the menu options with prices
+    for (int i = 0; i < itemNames.size(); i++)                  // For loop to iterate through the itemNames vector (and itemPrices)
     {
-        cout << "[" << i + 1 << "] " << itemNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << itemPrices[i] << endl;
+        cout << "[" << i + 1 << "] " << itemNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << itemPrices[i] << endl;   // [" << i + 1 << "] displays a number next to each menu item. itemNames[i] retrieves the menu item at index i. fixed and setprecision(2) ensure that the price is displayed with the correct decimal placement i.e 0.00. itemPrices[i] retrieves the price of the menu item
     }
     
-    cout << "[7] Combo Meal\n" << endl;
-    cout << "[8] Cancel\n" << endl;
+    cout << "[7] Combo Meal\n" << endl;                         // Displays the combo meal option 
+    cout << "[8] Cancel\n" << endl;                             // Displays the cancel option
     cout << "Please choose an option: ";
-    cin >> choice;
+    cin >> choice;                                              // Get user input and stores it in the variable 'choice'
     cout << endl;
 
-    while (choice > 8 || choice < 1)
+    while (choice > 8 || choice < 1)                            // Check if the user's choice is within range. If user selects a number above 8 and below 1, the following will be displayed
     {
-        cout << "Please enter a valid choice: " << endl;
+        cout << "Please enter a valid choice: " << endl;        // Will display text to the user
         cin >> choice;
     }
 
-    switch (choice)
+    switch (choice)                                             // Switch statement to perform cases dependent on the user's input
     {
     case 1:
         order.item = "Sandwich";
@@ -133,7 +137,7 @@ void displayMenu(CurrentOrder& order)
 
 void saveOrder(CurrentOrder& order, vector<CurrentOrder>& orders)
 {
-    orders.push_back(order);                                                   // Adds the new order to the vector
+    orders.push_back(order);                                                                  // Adds the new order to the vector
     ofstream orderFile;
     orderFile.open("order.txt", ios::out | ios::app);
     orderFile << order.item << " " << order.quantity << " " << fixed << setprecision(2) << order.cost << endl; 
@@ -223,18 +227,11 @@ void secondMenu()
     case 2:
         // go to user menu or exit?
         cout << "Goodbye....";
+        cout << endl;
         break;
     }
 }
 
-void printHeading()
-{
-    cout << endl;
-    cout << "****************************\n";
-    cout << "School Lunch Ordering System\n";
-    cout << "****************************\n";
-    cout << endl;
-}
 
 /*void comboMenu()
 {
@@ -259,34 +256,5 @@ void printHeading()
     {
         cout << "Please enter a valid choice: ";
         cin >> choice;
-    }
-}*/
-
-/*void orderMenu()
-{
-    int choice;
-
-    cout << "How would you like to proceed?\n" << endl;
-    cout << "[1] Add to Order" << endl;
-    cout << "[2] View Order Total\n" << endl;
-    cout << "Please enter your choice: ";
-    cin >> choice;
-
-    while (choice > 2 || choice < 1)
-    {
-        cout << "Please enter a valid choice: ";
-        cin >> choice;
-    }
-
-    if (choice == 1)
-    {
-        displayMenu(order);
-    }
-
-    else if (choice == 2)
-    {
-        displayOrder(order);
-        displayTotal(total, count);
-        secondMenu();
     }
 }*/

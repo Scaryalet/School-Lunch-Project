@@ -49,3 +49,6 @@ Sandwich 2 16.00
 Chips 3 15.00
 Hot Dog 2 13.00
 Salad 5 30.00
+Sandwich 1 8.00
+Hot Dog 2 13.00
+Sandwich 1 8.00

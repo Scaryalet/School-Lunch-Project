@@ -14,12 +14,6 @@ bool found = false;
 // structures here
 
 
-
-// structures here
-
-
-
-
 //Admin Structures
 struct LastOrder {
     string paymentMethod;
@@ -50,10 +44,6 @@ void adminAddUsers();
 void adminEditUsers();
 void adminRemoveUsers();
 void printHeading();
-
-
-// put your Function prototypes here
-
 
 // signup-login function prototypes
 void createAccount();
@@ -139,21 +129,10 @@ void discountSearch()
     }
 }
 
+
 void displayOrder() {
     ifstream orderFile("order.txt");
     string line;
-
-
-int main()
-{
-    //Josh's main function code goes here
-
-   
-
-
-    
-
-
     while (getline(orderFile, line)) {
         cout << line << endl;
     }
@@ -246,12 +225,6 @@ void createAccount()
 
     cout << "Account created successfully.\n";
 }
-//Defined Functions go here:
-
-
-
-
-
 
 void successfulLogin()
 {

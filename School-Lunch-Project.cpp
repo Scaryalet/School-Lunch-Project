@@ -14,12 +14,6 @@ bool found = false;
 // structures here
 
 
-
-// structures here
-
-
-
-
 //Admin Structures
 struct LastOrder {
     string paymentMethod;
@@ -35,7 +29,14 @@ struct Users {
 };
 
 
+
+
+//combo vectors 
+vector<double> comboPrices = { 15.00, 13.50, 15.00 };
+vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
+
 // vectors here
+
 
 
 //Admin Vectors
@@ -50,10 +51,6 @@ void adminEditUsers();
 void adminRemoveUsers();
 void printHeading();
 
-
-// put your Function prototypes here
-
-
 // signup-login function prototypes
 void createAccount();
 void successfulLogin();
@@ -64,6 +61,13 @@ void adminLogin();
 void discountSearch();
 void displayOrder();
 void payment();
+
+//combo function prototype
+/*
+~~~~~TO BE UNCOMMENTED ONCE TANISHAS CODE HAS BEEN ADDED~~~~~
+void comboMenu(CurrentOrder& order)
+*/
+
 
 int main()
 {
@@ -109,8 +113,8 @@ int main()
 
 //Defined Functions go here:
 
-// payment functions defined:
-void discountSearch()
+//payment functions defined:
+void discountSearch()           //Function to search file for vaild discount code
 {
     string discount;
     ifstream infile("discountCodes.txt");
@@ -138,14 +142,24 @@ void discountSearch()
     }
 }
 
-void displayOrder() {
+
+void displayOrder() {           //function to display users current order
     ifstream orderFile("order.txt");
     string line;
+
+    while (getline(orderFile, line)) {
+        cout << line << endl;
+    }
+
+    orderFile.close();
+}
+
 }
 
 
 
-void payment() {
+
+void payment() {            //function for payment section
     string discount;
     string cardNumber;
     int cvc;
@@ -180,7 +194,7 @@ void payment() {
 
         case 2:
             cout << "Please make your payment when collecting your order from the lunchroom\n\n";
-            void successfulLogin();
+            successfulLogin();
             break;
 
         case 3:
@@ -189,7 +203,7 @@ void payment() {
             cout << "please enter your cvc number: \n";
             cin >> cvc;
             cout << "Your payment has been successful! Please collect your order from the lunchroom at lunch time.\n\n";
-            void successfulLogin();
+            successfulLogin();
             break;
 
         default:
@@ -201,43 +215,33 @@ void payment() {
 }
 
 //signup-login functions defined:
-void createAccount()
+void createAccount()            //function to create a new account
 {
-    string firstName;
-    string lastName;
-    string classroom;
-    string username;
-    string password;
+    Users user;
 
-    // User details
+    //User details
     cout << "\n\n";
     cout << "CREATE A NEW ACCOUNT \n";
     cout << "Please enter your first name: ";
-    cin >> firstName;
+    cin >> user.fname;
     cout << "Please enter your last name: ";
-    cin >> lastName;
+    cin >> user.lastName;
     cout << "Please enter the students classroom number: ";
-    cin >> classroom;
+    cin >> user.roomNum;
     cout << "Please enter a username: ";
-    cin >> username;
+    cin >> user.username;
     cout << "Please enter a password: ";
-    cin >> password;
+    cin >> user.password;
 
-    // Open file and append user details
+    //Open file and append user details
     ofstream outfile("newUsers.txt", ios::app);
-    outfile << firstName << "," << lastName << "," << classroom << "," << username << "," << password << endl;
+    outfile << user.username << "\n" << user.password << "\n" << user.fname << "\n" << user.lastName << "\n" << user.roomNum << endl;
     outfile.close();
 
-    cout << "Account created successfully.\n";
+    cout << "Account created successfully. Please wait for admin approval.\n";
 }
-//Defined Functions go here:
 
-
-
-
-
-
-void successfulLogin()
+void successfulLogin()          //function for a successful login
 {
     do {
         cout << "****************************\n";
@@ -260,7 +264,7 @@ void successfulLogin()
             break;
 
         case 2:
-            cout << "Exiting program...\n";
+            exit(0);            //exit(0) ends program
             break;
 
         default:
@@ -270,39 +274,94 @@ void successfulLogin()
     } while (choice != 2);
 }
 
-// Function to log in to an existing account
-void login()
+void login()            // Function to log in to an existing account
 {
-    string username;
-    string password;
+    string inputUsername;
+    string inputPassword;
+    bool found = false;
+    int attempts = 0; 
+
+    while (!found && attempts < 3) {
+        // Get user details for login
+        cout << "\n\n";
+        cout << "LOG IN TO AN EXISTING ACCOUNT\n";
+        cout << "Please enter your username: ";
+        cin >> inputUsername;
+        cout << "Please enter your password: ";
+        cin >> inputPassword;
+
+        // Open file to find login
+        ifstream infile("users.txt");
+        if (infile)
+        {
+            string line;
+            Users user;
+
+            while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {                            
+            
+                if (user.username == inputUsername && user.password == inputPassword)           //compares content of file with user input if match is found successful login
+                {
+                    found = true;
+                    cout << "Login successful.\n";
+                    successfulLogin();
+                    break;
+                }
+                
+            }
+
+            infile.close();
+        }
+
+        if (!found)
+        {
+            attempts++;
+            if (attempts < 3) {         //statement to limit users to 3 attempts 
+                cout << "Invalid username or password. Please try again.\n";
+            } else {
+                cout << "Too many failed login attempts. Exiting program.\n";
+                exit(0);
+            }
+        }
+    }
+}
+
+
+
+// Function for admin login
+void adminLogin()
+{
+    string inputUsername;
+    string inputPassword;
     bool found = false;
 
     // Get user details for login
-    cout << "\n\n";
-    cout << "LOG IN TO AN EXISTING ACCOUNT\n";
+    cout << "LOG IN TO AN EXISTING ACCOUNT \n";
     cout << "Please enter your username: ";
-    cin >> username;
+    cin >> inputUsername;
     cout << "Please enter your password: ";
-    cin >> password;
+    cin >> inputPassword;
 
     // Open file to find login
-    ifstream infile("newUsers.txt");
+    ifstream infile("admin.txt");
     if (infile)
     {
+       
         string line;
+        Users user;
 
-        while (getline(infile, line))
-        {
-            if (line.find(username + "," + password) != string::npos)
+        while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {           
+
+            if (user.username == inputUsername && user.password == inputPassword)           //compares content of file with user input if match is found successful login
             {
                 found = true;
                 cout << "Login successful.\n";
                 successfulLogin();
                 break;
             }
+
         }
 
-        infile.close();
+            infile.close();
     }
 
     if (!found)
@@ -311,47 +370,70 @@ void login()
     }
 }
 
-// Function for admin login
-void adminLogin()
+//combo function defined
+/*
+ 
+ ~~~~~TO BE UNCOMMENTED ONCE TANISHAS CODE HAS BEEN ADDED~~~~~
+
+void comboMenu(CurrentOrder& order)
 {
-    string username;
-    string password;
-    bool found = false;
+    int choice;
 
-    // Get user details for login
-    cout << "\n LOG IN TO AN EXISTING ACCOUNT \n";
-    cout << "Please enter your username: ";
-    cin >> username;
-    cout << "Please enter your password: ";
-    cin >> password;
+    // printHeading()
 
-    // Open file to find login
-    ifstream infile("admin.txt");
-    if (infile)
+    cout << "Combo Options" << endl;
+    cout << "*************\n" << endl;
+    cout << "All combos include chips and a drink of your choice, drinks can be selected upon pickup\n" << endl;
+
+    cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
+    for (int i = 0; i < comboNames.size(); i++)
     {
-        string line;
+        cout << "[" << i + 1 << "] " << comboNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << comboPrices[i] << endl;
+    }
+    cout << "[4] Return to Menu" << endl;
+    cout << "[5] Cancel\n" << endl;
 
-        while (getline(infile, line))
-        {
-            if (line.find(username + "," + password) != string::npos)
-            {
-                found = true;
-                cout << "Login successful.\n";
-                break;
-            }
-        }
+    cout << "Please choose an option: ";
+    cin >> choice;
 
-        infile.close();
+    while (choice > 5 || choice < 1)
+    {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
     }
 
-    if (!found)
+    switch (choice)
     {
-        cout << "Invalid username or password. Please try again.\n";
+    case 1:
+        order.item = "Sandwich Combo";
+        order.cost = comboPrices[0];
+        break;
+
+    case 2:
+        order.item = "Hot Dog Combo";
+        order.cost = comboPrices[1];
+        break;
+
+    case 3:
+        order.item = "Salad Combo";
+        order.cost = comboPrices[2];
+        break;
+
+    case 4:
+        //back to menu
+        //menu function here
+        break;
+
+    case 5:
+        //cancel or exit?
+        //where to go from here?
+
+    default:
+        cout << "Invalid choice, Please try again.\n";
+        break;
     }
 }
-
-
-
+*/
 
 //Admin functions defined:
 
@@ -426,7 +508,7 @@ void adminMainScreen() {
         adminReviewOrders();
         break;
     case 2:
-        adminAddUsers();
+        adminAddUsers(); 
         break;
     case 3:
         adminEditUsers();

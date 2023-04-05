@@ -224,7 +224,7 @@ void createAccount()            //function to create a new account
 
     //Open file and append user details
     ofstream outfile("newUsers.txt", ios::app);
-    outfile << user.username << user.password << user.fname << user.lastName << user.roomNum << endl;
+    outfile << user.username << "\n" << user.password << "\n" << user.fname << "\n" << user.lastName << "\n" << user.roomNum << endl;
     outfile.close();
 
     cout << "Account created successfully. Please wait for admin approval.\n";

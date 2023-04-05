@@ -179,7 +179,7 @@ void payment() {
 
         case 2:
             cout << "Please make your payment when collecting your order from the lunchroom\n\n";
-            void successfulLogin();
+            successfulLogin();
             break;
 
         case 3:
@@ -188,7 +188,7 @@ void payment() {
             cout << "please enter your cvc number: \n";
             cin >> cvc;
             cout << "Your payment has been successful! Please collect your order from the lunchroom at lunch time.\n\n";
-            void successfulLogin();
+            successfulLogin();
             break;
 
         default:
@@ -202,32 +202,28 @@ void payment() {
 //signup-login functions defined:
 void createAccount()
 {
-    string firstName;
-    string lastName;
-    string classroom;
-    string username;
-    string password;
+    Users user;
 
     // User details
     cout << "\n\n";
     cout << "CREATE A NEW ACCOUNT \n";
     cout << "Please enter your first name: ";
-    cin >> firstName;
+    cin >> user.fname;
     cout << "Please enter your last name: ";
-    cin >> lastName;
+    cin >> user.lastName;
     cout << "Please enter the students classroom number: ";
-    cin >> classroom;
+    cin >> user.roomNum;
     cout << "Please enter a username: ";
-    cin >> username;
+    cin >> user.username;
     cout << "Please enter a password: ";
-    cin >> password;
+    cin >> user.password;
 
     // Open file and append user details
     ofstream outfile("newUsers.txt", ios::app);
-    outfile << firstName << "," << lastName << "," << classroom << "," << username << "," << password << endl;
+    outfile << user.username << user.password << user.fname << user.lastName << user.roomNum << endl;
     outfile.close();
 
-    cout << "Account created successfully.\n";
+    cout << "Account created successfully. Please wait for admin approval.\n";
 }
 
 void successfulLogin()
@@ -264,78 +260,95 @@ void successfulLogin()
 }
 
 // Function to log in to an existing account
+
 void login()
 {
-    string username;
-    string password;
+    string inputUsername;
+    string inputPassword;
+    bool found = false;
+    int attempts = 0; 
+
+    while (!found && attempts < 3) {
+        // Get user details for login
+        cout << "\n\n";
+        cout << "LOG IN TO AN EXISTING ACCOUNT\n";
+        cout << "Please enter your username: ";
+        cin >> inputUsername;
+        cout << "Please enter your password: ";
+        cin >> inputPassword;
+
+        // Open file to find login
+        ifstream infile("users.txt");
+        if (infile)
+        {
+            string line;
+            Users user;
+
+            while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {                            
+            
+                if (user.username == inputUsername && user.password == inputPassword) 
+                {
+                    found = true;
+                    cout << "Login successful.\n";
+                    successfulLogin();
+                    break;
+                }
+                
+            }
+
+            infile.close();
+        }
+
+        if (!found)
+        {
+            attempts++;
+            if (attempts < 3) {
+                cout << "Invalid username or password. Please try again.\n";
+            } else {
+                cout << "Too many failed login attempts. Exiting program.\n";
+                exit(0);
+            }
+        }
+    }
+}
+
+
+
+// Function for admin login
+void adminLogin()
+{
+    string inputUsername;
+    string inputPassword;
     bool found = false;
 
     // Get user details for login
-    cout << "\n\n";
-    cout << "LOG IN TO AN EXISTING ACCOUNT\n";
+    cout << "LOG IN TO AN EXISTING ACCOUNT \n";
     cout << "Please enter your username: ";
-    cin >> username;
+    cin >> inputUsername;
     cout << "Please enter your password: ";
-    cin >> password;
+    cin >> inputPassword;
 
     // Open file to find login
-    ifstream infile("newUsers.txt");
+    ifstream infile("admin.txt");
     if (infile)
     {
+       
         string line;
+        Users user;
 
-        while (getline(infile, line))
-        {
-            if (line.find(username + "," + password) != string::npos)
+        while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {
+
+            if (user.username == inputUsername && user.password == inputPassword)
             {
                 found = true;
                 cout << "Login successful.\n";
                 successfulLogin();
                 break;
             }
+
         }
 
-        infile.close();
-    }
-
-    if (!found)
-    {
-        cout << "Invalid username or password. Please try again.\n";
-    }
-}
-
-// Function for admin login
-void adminLogin()
-{
-    string username;
-    string password;
-    bool found = false;
-
-    // Get user details for login
-    cout << "LOG IN TO AN EXISTING ACCOUNT \n";
-    cout << "Please enter your username: ";
-    cin >> username;
-    cout << "Please enter your password: ";
-    cin >> password;
-
-    // Open file to find login
-    ifstream infile("admin.txt");
-    if (infile)
-    {
-        string line;
-
-        while (getline(infile, line))
-        {
-            if (line.find(username + "," + password) != string::npos)
-            {
-                found = true;
-                cout << "Login successful.\n";
-                break;
-            }
-        }
-
-        infile.close();
-        void adminMainScreen();
+            infile.close();
     }
 
     if (!found)
@@ -479,7 +492,7 @@ void adminMainScreen() {
         adminReviewOrders();
         break;
     case 2:
-        adminAddUsers();
+        adminAddUsers(); 
         break;
     case 3:
         adminEditUsers();

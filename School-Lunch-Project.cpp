@@ -30,8 +30,9 @@ struct Users {
 
 
 
-// vectors here
-
+//combo vectors 
+vector<double> comboPrices = { 15.00, 13.50, 15.00 };
+vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
 
 //Admin Vectors
 vector <Users> userList;
@@ -55,6 +56,9 @@ void adminLogin();
 void discountSearch();
 void displayOrder();
 void payment();
+
+//combo function prototype
+//void comboMenu(CurrentOrder& order)
 
 int main()
 {
@@ -308,7 +312,7 @@ void adminLogin()
     bool found = false;
 
     // Get user details for login
-    cout << "\n LOG IN TO AN EXISTING ACCOUNT \n";
+    cout << "LOG IN TO AN EXISTING ACCOUNT \n";
     cout << "Please enter your username: ";
     cin >> username;
     cout << "Please enter your password: ";
@@ -331,6 +335,7 @@ void adminLogin()
         }
 
         infile.close();
+        void adminMainScreen();
     }
 
     if (!found)
@@ -339,8 +344,67 @@ void adminLogin()
     }
 }
 
+//combo function defined
+/*
+void comboMenu(CurrentOrder& order)
+{
+    int choice;
 
+    // printHeading()
 
+    cout << "Combo Options" << endl;
+    cout << "*************\n" << endl;
+    cout << "All combos include chips and a drink of your choice, drinks can be selected upon pickup\n" << endl;
+
+    cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
+    for (int i = 0; i < comboNames.size(); i++)
+    {
+        cout << "[" << i + 1 << "] " << comboNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << comboPrices[i] << endl;
+    }
+    cout << "[4] Return to Menu" << endl;
+    cout << "[5] Cancel\n" << endl;
+
+    cout << "Please choose an option: ";
+    cin >> choice;
+
+    while (choice > 5 || choice < 1)
+    {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
+    }
+
+    switch (choice)
+    {
+    case 1:
+        order.item = "Sandwich Combo";
+        order.cost = comboPrices[0];
+        break;
+
+    case 2:
+        order.item = "Hot Dog Combo";
+        order.cost = comboPrices[1];
+        break;
+
+    case 3:
+        order.item = "Salad Combo";
+        order.cost = comboPrices[2];
+        break;
+
+    case 4:
+        //back to menu
+        //menu function here
+        break;
+
+    case 5:
+        //cancel or exit?
+        //where to go from here?
+
+    default:
+        cout << "Invalid choice, Please try again.\n";
+        break;
+    }
+}
+*/
 
 //Admin functions defined:
 

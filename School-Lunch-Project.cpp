@@ -12,7 +12,8 @@ using namespace std;
 
 int choice;
 bool found = false;
-double total = 0;
+double total = 0;  // declared globally so that all functions have access to it (payment function, process oder, display total)
+
 
 struct CurrentOrder                                // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter)
 {
@@ -60,6 +61,7 @@ void adminAddUsers();
 void adminEditUsers();
 void adminRemoveUsers();
 void printHeading();
+void adminSaveUsersToFile();
 // order menu functions
 void displayMenu(CurrentOrder& order);                                   // '&' is used to pass by reference. Changes made to 'order' within the 'displayMenu' function will affect the CurrentOrder struct            
 void saveOrder();
@@ -82,8 +84,8 @@ void payment();
 
 int main()
 {
-    //Josh's main function code goes here
-
+   
+    system("cls");
     cout << "*********************************************\n";
     cout << "WELCOME TO THE SCHOOLS LUNCH ORDERING SYSTEM!\n";
     cout << "*********************************************\n\n";
@@ -483,7 +485,7 @@ void adminMainScreen() {
     cout << "[2] Add Users" << endl;
     cout << "[3] Edit User Details" << endl;
     cout << "[4] Remove Users" << endl;
-    cout << "[5] Log Out" << endl << endl;
+    cout << "[5] Log Out and Exit" << endl << endl;
 
     int choice;
     // user input
@@ -504,7 +506,7 @@ void adminMainScreen() {
         adminRemoveUsers();
         break;
     case 5:
-        main();
+        exit(0);
         
 
     }
@@ -520,9 +522,18 @@ void adminReviewOrders() {
     cout << "*************" << endl << endl;
 
     // Prints list of users to allow user to choose from
-
+    int count = 0;
     for (int i = 0; i < userList.size(); i++) {
-        cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
+        
+        if (userList[i].lastOrder.pastOrderItems.size() > 0) {
+            cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
+            count++;
+        }
+    }
+    if (count == 0) {
+        cout << "No users with orders found, returning you to the main menu" << endl << endl;
+        system("pause");
+        adminMainScreen();
     }
     cout << endl << endl << "Enter 1 to review a users order or 2 to go back to main menu: ";
 
@@ -547,12 +558,7 @@ void adminReviewOrders() {
                     cout << "Order for " << userList[i].fname << " " << userList[i].lastName << endl;
                     cout << "Class: " << userList[i].roomNum << endl << endl;
                     for (int j = 0; j < userList[i].lastOrder.pastOrderItems.size(); j++) { // loop through chosen users last order items
-                        if (userList[i].lastOrder.pastOrderItems.size() > 0) { // make sure there are items
-                            cout << userList[i].lastOrder.pastOrderItems[j] << endl; // print order items
-                        }
-                        else {
-                            cout << "no previous order found" << endl;
-                        }
+                        cout << userList[i].lastOrder.pastOrderItems[j] << endl; // print order items
                     }
                     cout << "Total: $" << userList[i].lastOrder.cost << endl;
                     cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; // print payment method  
@@ -721,6 +727,8 @@ void adminAddUsers() {
             ofstream file("newUsers.txt", ios::trunc);
             for (int i = 0; i < usersToApprove.size(); i++) {
                 // only if vector > 0, add
+                string uName = usersToApprove[i].username;
+                
                 file << usersToApprove[i].username << endl << usersToApprove[i].password << endl << usersToApprove[i].fName <<
                     endl << usersToApprove[i].lName << endl << usersToApprove[i].classNum << endl << endl;
             }
@@ -729,7 +737,6 @@ void adminAddUsers() {
     }
 }
 void adminEditUsers() {
-start: //jumps to here if user wants to edit another user.
     system("cls"); //clears screen
 
     //Prints headings
@@ -812,6 +819,7 @@ start: //jumps to here if user wants to edit another user.
                 case 5:
                     adminEditUsers();
                 case 6:
+                    adminSaveUsersToFile();
                     adminMainScreen();
 
                 }
@@ -823,20 +831,13 @@ start: //jumps to here if user wants to edit another user.
         if (found == 0) { //if name doesn't match, then prints no user found.
             cout << "No user found, please check spelling" << endl << endl;
             system("pause");
-            goto start; //returns to start of this function to allow user to re-enter and input.
+            adminEditUsers(); //returns to start of this function to allow user to re-enter and input.
         }
     }
     // Overwriting the file by saving the vector contents to it.
 
     if (temp == "1") {
-        ofstream file("users.txt", ios::trunc);
-
-        for (int i = 0; i < userList.size(); i++) {
-            file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
-                userList[i].lastName << endl << userList[i].roomNum << endl << endl;
-
-        }
-        file.close();
+        adminSaveUsersToFile();
 
         adminMainScreen();
 
@@ -906,14 +907,7 @@ void adminRemoveUsers() {
 
     if (temp == "1") {
 
-        for (int i = 0; i < userList.size(); i++) {
-
-            file << userList[i].username << endl << userList[i].password << endl << userList[i].fname <<
-                endl << userList[i].lastName << endl << userList[i].roomNum << endl << endl;
-
-
-        }
-        file.close();
+        adminSaveUsersToFile();
         adminMainScreen();
 
     }
@@ -924,7 +918,16 @@ void printHeading() {
     cout << "SCHOOL LUNCH ORDERING SYSTEM" << endl;
     cout << "****************************" << endl << endl;
 }
+void adminSaveUsersToFile() {
+    ofstream file("users.txt", ios::trunc);
+    system("pause");
+    for (int i = 0; i < userList.size(); i++) {
+        file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
+            userList[i].lastName << endl << userList[i].roomNum << endl << endl;
 
+    }
+    file.close();
+}
 
 
 
@@ -1052,9 +1055,10 @@ void processOrder()                                                      // The 
     
                                                         // Declaring variable total to keep track of total costs - set to 0
     char repeat;                                                         // Declaring variable repeat to take user input
-
+    
     do                                                                   // do-while loop that will continue to run until user selects 'n'
     {
+        
         CurrentOrder order;                                                 // CurrentOrder struct called order
         displayMenu(order);                                              // Calls the displayMenu() function. order is passed to the function as a parameter/argument to allow user input to be kept updated
                                              

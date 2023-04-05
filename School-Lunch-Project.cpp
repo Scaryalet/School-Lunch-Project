@@ -68,6 +68,7 @@ void orderSummary(vector<CurrentOrder>& orders);
 void displayTotal(double total);
 void processOrder();
 void comboMenu(CurrentOrder& order);
+void secondMenu();
 // signup-login function prototypes
 void createAccount();
 void successfulLogin();

@@ -58,7 +58,11 @@ void displayOrder();
 void payment();
 
 //combo function prototype
-//void comboMenu(CurrentOrder& order)
+/*
+~~~~~TO BE UNCOMMENTED ONCE TANISHAS CODE HAS BEEN ADDED~~~~~
+void comboMenu(CurrentOrder& order)
+*/
+
 
 int main()
 {
@@ -104,8 +108,8 @@ int main()
 
 //Defined Functions go here:
 
-// payment functions defined:
-void discountSearch()
+//payment functions defined:
+void discountSearch()           //Function to search file for vaild discount code
 {
     string discount;
     ifstream infile("discountCodes.txt");
@@ -134,7 +138,7 @@ void discountSearch()
 }
 
 
-void displayOrder() {
+void displayOrder() {           //function to display users current order
     ifstream orderFile("order.txt");
     string line;
     while (getline(orderFile, line)) {
@@ -144,7 +148,7 @@ void displayOrder() {
     orderFile.close();
 }
 
-void payment() {
+void payment() {            //function for payment section
     string discount;
     string cardNumber;
     int cvc;
@@ -200,11 +204,11 @@ void payment() {
 }
 
 //signup-login functions defined:
-void createAccount()
+void createAccount()            //function to create a new account
 {
     Users user;
 
-    // User details
+    //User details
     cout << "\n\n";
     cout << "CREATE A NEW ACCOUNT \n";
     cout << "Please enter your first name: ";
@@ -218,7 +222,7 @@ void createAccount()
     cout << "Please enter a password: ";
     cin >> user.password;
 
-    // Open file and append user details
+    //Open file and append user details
     ofstream outfile("newUsers.txt", ios::app);
     outfile << user.username << user.password << user.fname << user.lastName << user.roomNum << endl;
     outfile.close();
@@ -226,7 +230,7 @@ void createAccount()
     cout << "Account created successfully. Please wait for admin approval.\n";
 }
 
-void successfulLogin()
+void successfulLogin()          //function for a successful login
 {
     do {
         cout << "****************************\n";
@@ -249,7 +253,7 @@ void successfulLogin()
             break;
 
         case 2:
-            cout << "Exiting program...\n";
+            exit(0);            //exit(0) ends program
             break;
 
         default:
@@ -259,9 +263,7 @@ void successfulLogin()
     } while (choice != 2);
 }
 
-// Function to log in to an existing account
-
-void login()
+void login()            // Function to log in to an existing account
 {
     string inputUsername;
     string inputPassword;
@@ -286,7 +288,7 @@ void login()
 
             while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {                            
             
-                if (user.username == inputUsername && user.password == inputPassword) 
+                if (user.username == inputUsername && user.password == inputPassword)           //compares content of file with user input if match is found successful login
                 {
                     found = true;
                     cout << "Login successful.\n";
@@ -302,7 +304,7 @@ void login()
         if (!found)
         {
             attempts++;
-            if (attempts < 3) {
+            if (attempts < 3) {         //statement to limit users to 3 attempts 
                 cout << "Invalid username or password. Please try again.\n";
             } else {
                 cout << "Too many failed login attempts. Exiting program.\n";
@@ -336,9 +338,9 @@ void adminLogin()
         string line;
         Users user;
 
-        while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {
+        while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {           
 
-            if (user.username == inputUsername && user.password == inputPassword)
+            if (user.username == inputUsername && user.password == inputPassword)           //compares content of file with user input if match is found successful login
             {
                 found = true;
                 cout << "Login successful.\n";
@@ -359,6 +361,9 @@ void adminLogin()
 
 //combo function defined
 /*
+ 
+ ~~~~~TO BE UNCOMMENTED ONCE TANISHAS CODE HAS BEEN ADDED~~~~~
+
 void comboMenu(CurrentOrder& order)
 {
     int choice;

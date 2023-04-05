@@ -30,9 +30,14 @@ struct Users {
 
 
 
+
 //combo vectors 
 vector<double> comboPrices = { 15.00, 13.50, 15.00 };
 vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
+
+// vectors here
+
+
 
 //Admin Vectors
 vector <Users> userList;
@@ -141,12 +146,18 @@ void discountSearch()           //Function to search file for vaild discount cod
 void displayOrder() {           //function to display users current order
     ifstream orderFile("order.txt");
     string line;
+
     while (getline(orderFile, line)) {
         cout << line << endl;
     }
 
     orderFile.close();
 }
+
+}
+
+
+
 
 void payment() {            //function for payment section
     string discount;

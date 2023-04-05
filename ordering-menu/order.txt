@@ -52,3 +52,12 @@ Salad 5 30.00
 Sandwich 1 8.00
 Hot Dog 2 13.00
 Sandwich 1 8.00
+Sandwich 12 96.00
+Sandwich 12 96.00
+Sandwich 1 8.00
+Sandwich 1 8.00
+Water 5 15.00
+Sandwich 12 96.00
+Fizzy Drink 6 24.00
+Sandwich 1 8.00
+Sandwich 1 8.00

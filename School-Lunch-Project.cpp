@@ -187,6 +187,8 @@ void discountSearch(double& total)           //Function to search file for valid
     {
         cout << "Invalid discount code, Please try again.\n\n";
     }
+    orders.push_back(total);
+
 }
 
 void payment() {            //function for payment section
@@ -1025,7 +1027,7 @@ void displayMenu(CurrentOrder& order)                           // The displayMe
         break;
 
     case 7:                                                                            // If option 7 is selected, it will call the comboMenu() function to display the combo options
-        // Call combo function
+        comboMenu(order);
         break;
 
     case 8:                                                                            // If option 8 is selected by the user,  it will exit out of the food menu

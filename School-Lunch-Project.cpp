@@ -77,7 +77,7 @@ void successfulLogin();
 void login();
 void adminLogin();
 // Payment function prototypes
-void discountSearch();
+void discountSearch(double& total);
 void payment();
 
 
@@ -129,6 +129,7 @@ int main()
 
 
 //payment functions defined:
+/*
 void discountSearch()           //Function to search file for vaild discount code
 {
     string discount;
@@ -156,6 +157,38 @@ void discountSearch()           //Function to search file for vaild discount cod
         cout << "Invalid discount code, Please try again.\n\n";
     }
 }
+*/
+
+void discountSearch(double& total)           //Function to search file for valid discount code
+{
+    string discount;
+    ifstream infile("discountCodes.txt");
+    if (infile)
+    {
+        string line;
+
+        while (getline(infile, line))
+        {
+            if (line.find(discount) != string::npos)
+            {
+                found = true;
+                // Code to apply discount goes here, Waiting on orderTotal function.
+                double discountAmount = total * 0.05;
+                total -= discountAmount;
+                cout << "A 5% discount has been applied to your order!\n\n";
+                break;
+            }
+        }
+
+        infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid discount code, Please try again.\n\n";
+    }
+}
+
 void payment() {            //function for payment section
     string discount;
     string cardNumber;
@@ -188,7 +221,7 @@ void payment() {            //function for payment section
             cout << "Use discount code YouGetAnA+ for 15% off your order! \n";
             cout << "Please enter your discount code: \n";
             cin >> discount;
-            discountSearch();
+            discountSearch(total);
             break;
 
         case 2:

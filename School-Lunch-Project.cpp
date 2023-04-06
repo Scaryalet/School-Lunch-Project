@@ -77,7 +77,7 @@ void successfulLogin();
 void login();
 void adminLogin();
 // Payment function prototypes
-void discountSearch();
+void discountSearch(double& total);
 void payment();
 
 
@@ -114,7 +114,7 @@ int main()
             break;
 
         case 4:
-            cout << "Exiting program...\n";
+            exit(0);
             break;
 
         default:
@@ -129,6 +129,7 @@ int main()
 
 
 //payment functions defined:
+/*
 void discountSearch()           //Function to search file for vaild discount code
 {
     string discount;
@@ -156,6 +157,39 @@ void discountSearch()           //Function to search file for vaild discount cod
         cout << "Invalid discount code, Please try again.\n\n";
     }
 }
+*/
+
+void discountSearch(double& total)           //Function to search file for valid discount code
+{
+    string discount;
+    ifstream infile("discountCodes.txt");
+    if (infile)
+    {
+        string line;
+
+        while (getline(infile, line))
+        {
+            if (line.find(discount) != string::npos)
+            {
+                found = true;
+                double discountAmount = total * 0.05;
+                total -= discountAmount;
+                cout << "A 5% discount has been applied to your order!\n\n";
+                saveOrder();
+                break;
+            }
+        }
+
+        infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid discount code, Please try again.\n\n";
+    }
+}
+
+
 void payment() {            //function for payment section
     string discount;
     string cardNumber;
@@ -188,7 +222,7 @@ void payment() {            //function for payment section
             cout << "Use discount code YouGetAnA+ for 15% off your order! \n";
             cout << "Please enter your discount code: \n";
             cin >> discount;
-            discountSearch();
+            discountSearch(total);
             break;
 
         case 2:
@@ -237,7 +271,7 @@ void createAccount()            //function to create a new account
 
     //Open file and append user details
     ofstream outfile("newUsers.txt", ios::app);
-    outfile << user.username << "\n" << user.password << "\n" << user.fname << "\n" << user.lastName << "\n" << user.roomNum << endl;
+    outfile << user.username << "\n" << user.password << "\n" << user.fname << "\n" << user.lastName << "\n" << user.roomNum << "\n\n";
     outfile.close();
 
     cout << "Account created successfully. Please wait for admin approval.\n";
@@ -992,7 +1026,7 @@ void displayMenu(CurrentOrder& order)                           // The displayMe
         break;
 
     case 7:                                                                            // If option 7 is selected, it will call the comboMenu() function to display the combo options
-        // Call combo function
+        comboMenu(order);
         break;
 
     case 8:                                                                            // If option 8 is selected by the user,  it will exit out of the food menu

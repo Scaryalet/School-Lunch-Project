@@ -8,12 +8,9 @@
 
 using namespace std;
 
-
-
 int choice;
 bool found = false;
-double total = 0;  // declared globally so that all functions have access to it (payment function, process oder, display total)
-
+double total = 0;                                  // Declared globally so that all functions have access to it (payment function, process oder, display total)
 
 struct CurrentOrder                                // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter)
 {
@@ -21,18 +18,20 @@ struct CurrentOrder                                // Defining a struct called C
     int quantity;                                  // Structure member type int
     double cost;                                   // Structure member type double
 
-    CurrentOrder(int a = 0, double b = 0.00)      // Initialising quantity and cost members with default constructor 
+    CurrentOrder(int a = 0, double b = 0.00)       // Initialising quantity and cost members with default constructor 
     {
         quantity = a;
         cost = b;
     }
 };
+
 //Admin Structures
 struct LastOrder {
     string paymentMethod;
     string cost;
     vector<string> pastOrderItems;
 };
+
 struct Users {
     string username;
     string password;
@@ -41,14 +40,12 @@ struct Users {
     int roomNum = NULL;
     LastOrder lastOrder;
 };
+
 Users user;
-
-
-
 
 vector<double> comboPrices = { 15.00, 13.50, 15.00 };
 vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
-vector<CurrentOrder> orders;
+vector<CurrentOrder> orders;                                                                             // Vector to call the information stored in CurrentOrders, called orders
 vector<double> itemPrices = { 8.00, 6.50, 5.00, 6.00, 3.00, 4.00 };                                      // Vector to store the item prices
 vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink" };          // Vector to store item names
 vector <Users> userList;
@@ -65,8 +62,8 @@ void adminSaveUsersToFile();
 // order menu functions
 void displayMenu(CurrentOrder& order);                                   // '&' is used to pass by reference. Changes made to 'order' within the 'displayMenu' function will affect the CurrentOrder struct            
 void saveOrder();
-void displayOrder(CurrentOrder& order);
-void orderSummary(vector<CurrentOrder>& orders);
+void displayOrder(CurrentOrder& order);                                  // '&' is used to pass by reference
+void orderSummary(vector<CurrentOrder>& orders);                         // '&' is used to pass by reference. vector<CurrentOrder>& orders is the parameter for this function
 void displayTotal(double total);
 void processOrder();
 void comboMenu(CurrentOrder& order);
@@ -80,11 +77,8 @@ void adminLogin();
 void discountSearch();
 void payment();
 
-
-
 int main()
 {
-   
     system("cls");
     cout << "*********************************************\n";
     cout << "WELCOME TO THE SCHOOLS LUNCH ORDERING SYSTEM!\n";
@@ -126,9 +120,7 @@ int main()
     return 0;
 }
 
-
-
-//payment functions defined:
+//Payment functions defined:
 void discountSearch()           //Function to search file for vaild discount code
 {
     string discount;
@@ -162,9 +154,7 @@ void payment() {            //function for payment section
     int cvc;
 
     do {
-        cout << "****************************\n";
-        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
-        cout << "****************************\n\n";
+        printHeading();
 
         cout << "Payment options \n";
         cout << "*************** \n\n";
@@ -212,7 +202,6 @@ void payment() {            //function for payment section
         default:
             cout << "Invalid choice, Please try again.\n";
             break;
-
         }
     } while (choice != 3);
 }
@@ -224,6 +213,7 @@ void createAccount()            //function to create a new account
     //User details
     cout << "\n\n";
     cout << "CREATE A NEW ACCOUNT \n";
+    cout << "********************\n" << endl; 
     cout << "Please enter your first name: ";
     cin >> user.fname;
     cout << "Please enter your last name: ";
@@ -242,12 +232,11 @@ void createAccount()            //function to create a new account
 
     cout << "Account created successfully. Please wait for admin approval.\n";
 }
+
 void successfulLogin()          //function for a successful login
 {
     do {
-        cout << "****************************\n";
-        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
-        cout << "****************************\n\n";
+        printHeading();
 
         cout << "Welcome \n\n";
 
@@ -256,7 +245,6 @@ void successfulLogin()          //function for a successful login
 
         cout << "Please select an option: \n";
         cin >> choice;
-
 
         switch (choice)
         {
@@ -274,6 +262,7 @@ void successfulLogin()          //function for a successful login
         }
     } while (choice != 2);
 }
+
 void login()            // Function to log in to an existing account
 {
     string inputUsername;
@@ -296,7 +285,6 @@ void login()            // Function to log in to an existing account
         {
             string line;
             
-
             while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {                            
             
                 if (user.username == inputUsername && user.password == inputPassword)           //compares content of file with user input if match is found successful login
@@ -324,6 +312,7 @@ void login()            // Function to log in to an existing account
         }
     }
 }
+
 // Function for admin login
 void adminLogin()
 {
@@ -354,7 +343,6 @@ void adminLogin()
             }
 
         }
-
             infile.close();
     }
 
@@ -363,6 +351,7 @@ void adminLogin()
         cout << "Invalid username or password. Please try again.\n";
     }
 }
+
 //combo function defined
 void comboMenu(CurrentOrder& order)
 {
@@ -423,9 +412,6 @@ void comboMenu(CurrentOrder& order)
     }
 }
 
-
-
-
 //Admin functions defined:
 void adminPullUserInfo() {
     // when admin logs in
@@ -472,8 +458,8 @@ void adminPullUserInfo() {
     }
     users.close();
 }
-void adminMainScreen() {
 
+void adminMainScreen() {
 
     // main menu
     system("cls");
@@ -507,11 +493,9 @@ void adminMainScreen() {
         break;
     case 5:
         exit(0);
-        
-
     }
-
 }
+
 void adminReviewOrders() {
     cin.ignore(); //used to clear input stream for following getline code.
     
@@ -548,7 +532,6 @@ void adminReviewOrders() {
             cout << endl << endl << "Enter First and Last Names: ";
             cin >> tempFName >> tempLName;
 
-
             // display last order of chosen user
 
             for (int i = 0; i < userList.size(); i++) { // loop through user list
@@ -576,8 +559,6 @@ void adminReviewOrders() {
                             adminMainScreen();
                         default:
                             cout << endl << "Enter an appropriate value" << endl << endl;
-                            
-
                         }
                     }
                 }
@@ -591,11 +572,9 @@ void adminReviewOrders() {
     if (choice != "1" && choice != "2") { //prevents user from putting in an incorrect value.
         cout << endl << "Please enter an appropriate value" << endl << endl;
         adminReviewOrders();
-    }
-
-    
-    
+    } 
 }
+
 void adminAddUsers() {
     string temp;
     struct NewUser {
@@ -691,15 +670,12 @@ void adminAddUsers() {
                         usersToApprove.erase(usersToApprove.begin() + i);
 
                         cout << endl << endl << "User Added Succesfully!" << endl << endl;
-
-
                     }
                     else if (approve == "remove") {
 
                         usersToApprove.erase(usersToApprove.begin() + i);
 
                         cout << endl << endl << "User Removed Succesfully!" << endl << endl;
-
                     }
                 }
             }
@@ -736,6 +712,7 @@ void adminAddUsers() {
         }
     }
 }
+
 void adminEditUsers() {
     system("cls"); //clears screen
 
@@ -844,10 +821,9 @@ void adminEditUsers() {
     }
 
 }
+
 void adminRemoveUsers() {
-
-
-
+    
     ofstream file("users.txt", ios::trunc);
     string temp;
     do {
@@ -909,27 +885,24 @@ void adminRemoveUsers() {
 
         adminSaveUsersToFile();
         adminMainScreen();
-
     }
-
 }
+
 void printHeading() {
     cout << "****************************" << endl;
     cout << "SCHOOL LUNCH ORDERING SYSTEM" << endl;
     cout << "****************************" << endl << endl;
 }
+
 void adminSaveUsersToFile() {
     ofstream file("users.txt", ios::trunc);
     system("pause");
     for (int i = 0; i < userList.size(); i++) {
         file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
             userList[i].lastName << endl << userList[i].roomNum << endl << endl;
-
     }
     file.close();
 }
-
-
 
 // order menu functions
 void displayMenu(CurrentOrder& order)                           // The displayMenu() function displays the menu options and prices by calling their respective vectors and storing user input in the struct CurrentOrder
@@ -1010,9 +983,9 @@ void displayMenu(CurrentOrder& order)                           // The displayMe
         order.cost *= order.quantity;                                                  // Multiplies order.cost by order.quantity
     }
 }
-void saveOrder()                      // The saveOrder function takes two parameters - CurrentOrder with object order, and a vector of CurrentOrder objects called orders. This function writes data from order to a file named 'order.txt'
+
+void saveOrder()                                                                       // The saveOrder function takes two parameters - CurrentOrder with object order, and a vector of CurrentOrder objects called orders. This function writes data from order to a file named 'order.txt'
 {
-   
     ofstream orderFile;                                                                // Writes to the 'order.txt' file declared as ofstream named orderFile
     orderFile.open("order.txt", ios::out | ios::app);                                  // Opens the 'order.txt' file with output and append
     orderFile << user.username << endl << total << endl << user.lastOrder.paymentMethod << endl;           // Writes to the file from order to orderFile in the order of item, qunatity and cost. Fixed and setprecision(2) is used to ensure the decimal is placed in the correct place
@@ -1024,6 +997,7 @@ void saveOrder()                      // The saveOrder function takes two parame
 
     orderFile.close();                                                                 // Closes the file
 }
+
 void displayOrder(CurrentOrder& order)                                                 // The displayOrder() function displays the order item, quantity and cost when called. Uses the CurrentOrder struct as a parameter       
 {
     cout << endl;
@@ -1031,6 +1005,7 @@ void displayOrder(CurrentOrder& order)                                          
     cout << "Quantity: " << order.quantity << endl;                                    // Will display the quantity chosen
     cout << "Cost: $" << fixed << setprecision(2) << order.cost << endl;               // Will display the cost of item + the quantity ordered. Fixed + setprecision is used to ensure the format of the decimal point is diplayed correctly   
 }
+
 void displayTotal(double total)                                                        // The displayTotal() function will display the total cost of each item and quantity ordered. double total as a parameter
 {
     cout << endl;
@@ -1038,6 +1013,7 @@ void displayTotal(double total)                                                 
     cout << "Total cost: $" << fixed << setprecision(2) << total << endl;              // Will display the total cost when called. Fixed and setprecision(2) is used to ensure the decimal is in the correct place
     cout << "******************" << endl;
 }
+
 void orderSummary(vector<CurrentOrder>& orders)                                        // The orderSummary will display the entire order. A vector of CurrentOrder orders is included in the parenthesis to hold CurrentOrder objects
 {
     cout << endl;
@@ -1050,15 +1026,13 @@ void orderSummary(vector<CurrentOrder>& orders)                                 
         displayOrder(orders[i]);                                                       // Calls the displayOrder() function to display each order
     }
 }
+
 void processOrder()                                                      // The processOrder() function takes no arguments and calls multiple functions that are defined above to implememt the ordering process
-{
-    
-                                                        // Declaring variable total to keep track of total costs - set to 0
+{                                                    
     char repeat;                                                         // Declaring variable repeat to take user input
     
     do                                                                   // do-while loop that will continue to run until user selects 'n'
-    {
-        
+    { 
         CurrentOrder order;                                                 // CurrentOrder struct called order
         displayMenu(order);                                              // Calls the displayMenu() function. order is passed to the function as a parameter/argument to allow user input to be kept updated
                                              
@@ -1073,11 +1047,10 @@ void processOrder()                                                      // The 
     } while (repeat == 'y' || repeat == 'Y');                            // Runs the do-while loop if the condition 'y' is entered by the user
 
     orderSummary(orders);                                                // Calls the orderSummary() function to display every order ordered - orders is the argument
-    displayTotal(total); 
-    // Calls the displayTotal() function to display that calculated cost of the entire order - total is the argument
-   
+    displayTotal(total);                                                 // Calls the displayTotal() function to display that calculated cost of the entire order - total is the argument
     secondMenu();                                                        // Calls the secondMenu() function which will display another menu to the user
 }
+
 void secondMenu()                                                        // The secondMenu() function displays another menu to the user after they have added all items to their order
 {
     int choice;                                                          // Declaring variable choice with type int

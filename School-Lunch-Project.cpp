@@ -205,10 +205,10 @@ void payment() {            //function for payment section
         cout << "*************** \n\n";
 
         cout << "Your order: \n";
-        for (int i = 0; i < orders.size(); i++) {
+        for (int i = 0; i < orders.size(); i++) {           //displays the users order
             cout << orders[i].quantity << "X " << orders[i].item << endl;
         }
-        cout << "Total cost: \t \t" << total << endl;
+        cout << "Total cost: \t \t" << total << endl;           // total displays the total cost of the order
 
         cout << "[1] Enter discount code \n";
         cout << "[2] Pay with cash \n";
@@ -415,7 +415,7 @@ void comboMenu(CurrentOrder& order)
         cout << "[" << i + 1 << "] " << comboNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << comboPrices[i] << endl;
     }
     cout << "[4] Return to Menu" << endl;
-    cout << "[5] Cancel\n" << endl;
+    cout << "[5] Exit\n" << endl;
 
     cout << "Please choose an option: ";
     cin >> choice;
@@ -444,13 +444,12 @@ void comboMenu(CurrentOrder& order)
         break;
 
     case 4:
-        //back to menu
-        //menu function here
+        displayMenu(order);
         break;
 
     case 5:
-        //cancel or exit?
-        //where to go from here?
+        exit(0);
+        break;
 
     default:
         cout << "Invalid choice, Please try again.\n";

@@ -988,10 +988,11 @@ void saveOrder()                                                                
 {
     ofstream orderFile;                                                                // Writes to the 'order.txt' file declared as ofstream named orderFile
     orderFile.open("order.txt", ios::out | ios::app);                                  // Opens the 'order.txt' file with output and append
-    orderFile << user.username << endl << total << endl << user.lastOrder.paymentMethod << endl;           // Writes to the file from order to orderFile in the order of item, qunatity and cost. Fixed and setprecision(2) is used to ensure the decimal is placed in the correct place
+    orderFile << user.username << endl << total << endl << user.lastOrder.paymentMethod << endl;  // Writes to the file from order to orderFile
     
-    for (int i = 0; i < orders.size(); i++) {
-        orderFile << orders[i].quantity << "x " << orders[i].item << endl; 
+    for (int i = 0; i < orders.size(); i++) 
+    {
+        orderFile << orders[i].quantity << "x " << orders[i].item << endl;             // Displays the total
     }
     orderFile << endl;
 

@@ -466,7 +466,7 @@ void adminPullUserInfo() {
     // when admin logs in
 
     ifstream users("users.txt");
-    ifstream orders("orders.txt");
+    ifstream orders("order.txt");
     string line;
     string fname, lname, username, password;
     int roomNum;

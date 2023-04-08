@@ -220,7 +220,7 @@ void payment() {            //function for payment section
         switch (choice)
         {
         case 1:
-            cout << "Use discount code YouGetAnA+ for 15% off your order! \n";
+            cout << "Use discount code YouGetAnA+ for 5% off your order! \n";
             cout << "Please enter your discount code: \n";
             cin >> discount;
             discountSearch(total);

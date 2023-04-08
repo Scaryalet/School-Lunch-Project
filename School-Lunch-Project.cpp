@@ -455,6 +455,13 @@ void comboMenu(CurrentOrder& order)
         cout << "Invalid choice, Please try again.\n";
         break;
     }
+
+    if (choice >= 1 && choice <= 6)                                                    
+    {
+        cout << "Please enter quantity: ";
+        cin >> order.quantity;                                                         
+        order.cost *= order.quantity;                                                 
+    }
 }
 
 

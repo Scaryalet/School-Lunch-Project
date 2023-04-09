@@ -9,10 +9,14 @@
 using namespace std;
 
 
+//Variables declared globally:
 int choice;
 bool found = false;
+
 double total = 0;  // declared globally so that all functions have access to it (payment function, process oder, display total)
 
+
+//Structures:
 
 struct CurrentOrder                                // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter)
 {
@@ -26,7 +30,10 @@ struct CurrentOrder                                // Defining a struct called C
         cost = b;
     }
 };
+
 //Admin Structures
+
+
 struct LastOrder {
     string paymentMethod;
     string cost;
@@ -43,9 +50,14 @@ struct Users {
 Users user;
 
 
+
+
+
+//Vectors:
 vector<double> comboPrices = { 15.00, 13.50, 15.00 };
 vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
-vector<CurrentOrder> orders;
+vector<CurrentOrder> orders;                                                                             // Vector to call the information stored in CurrentOrders, called orders
+
 vector<double> itemPrices = { 8.00, 6.50, 5.00, 6.00, 3.00, 4.00 };                                      // Vector to store the item prices
 vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink" };          // Vector to store item names
 vector <Users> userList;
@@ -60,11 +72,13 @@ void adminEditUsers();
 void adminRemoveUsers();
 void printHeading();
 void adminSaveUsersToFile();
+
 // order menu functions
-void displayMenu(CurrentOrder& order);                                   // '&' is used to pass by reference. Changes made to 'order' within the 'displayMenu' function will affect the CurrentOrder struct            
+
+void displayMenu(CurrentOrder& order);                                  // '&' is used to pass by reference. Changes made to 'order' within the 'displayMenu' function will affect the CurrentOrder struct            
 void saveOrder();
-void displayOrder(CurrentOrder& order);
-void orderSummary(vector<CurrentOrder>& orders);
+void displayOrder(CurrentOrder& order);                                 // '&' is used to pass by reference
+void orderSummary(vector<CurrentOrder>& orders);                        // '&' is used to pass by reference. vector<CurrentOrder>& orders is the parameter for this function
 void displayTotal(double total);
 void processOrder();
 void comboMenu(CurrentOrder& order);
@@ -81,7 +95,7 @@ void payment();
 
 int main()
 {
-   
+
     system("cls");
     cout << "*********************************************\n";
     cout << "WELCOME TO THE SCHOOLS LUNCH ORDERING SYSTEM!\n";
@@ -163,65 +177,16 @@ void discountSearch(double& total)           //Function to search file for valid
     orders.push_back(total);
 }
 
-void payment() {            //function for payment section
-    string discount;
-    string cardNumber;
-    int cvc;
 
-    do {
-        cout << "****************************\n";
-        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
-        cout << "****************************\n\n";
 
-        cout << "Payment options \n";
-        cout << "*************** \n\n";
-
-        cout << "Your order: \n";
-        for (int i = 0; i < orders.size(); i++) {           //displays the users order
-            cout << orders[i].quantity << "X " << orders[i].item << endl;
-        }
-        cout << "Total cost: \t \t" << total << endl;           // total displays the total cost of the order
-
-        cout << "[1] Enter discount code \n";
-        cout << "[2] Pay with cash \n";
-        cout << "[3] Pay with card \n";
-
-        cout << "Please select an option: ";
-        cin >> choice;
-
-        switch (choice)
-        {
-        case 1:
-            cout << "Use discount code YouGetAnA+ for 5% off your order! \n";
-            cout << "Please enter your discount code: \n";
-            discountSearch(total);
-            break;
-
-        case 2:
-            cout << "Please make your payment when collecting your order from the lunchroom\n\n";
-            user.lastOrder.paymentMethod = "cash";
-            saveOrder();
-            successfulLogin();
-            break;
-
-        case 3:
-            cout << "please enter your card number: \n";
-            cin >> cardNumber;
-            cout << "please enter your cvc number: \n";
-            cin >> cvc;
-            cout << "Your payment has been successful! Please collect your order from the lunchroom at lunch time.\n\n";
-            user.lastOrder.paymentMethod = "card";
-            saveOrder();
-            successfulLogin();
-            break;
-
-        default:
-            cout << "Invalid choice, Please try again.\n";
-            break;
-
-        }
-    } while (choice != 3);
+void printHeading() {
+    cout << "****************************" << endl;
+    cout << "SCHOOL LUNCH ORDERING SYSTEM" << endl;
+    cout << "****************************" << endl << endl;
 }
+
+
+
 //signup-login functions defined:
 void createAccount()            //function to create a new account
 {
@@ -230,6 +195,7 @@ void createAccount()            //function to create a new account
     //User details
     cout << "\n\n";
     cout << "CREATE A NEW ACCOUNT \n";
+    cout << "********************\n" << endl;
     cout << "Please enter your first name: ";
     cin >> user.fname;
     cout << "Please enter your last name: ";
@@ -251,9 +217,7 @@ void createAccount()            //function to create a new account
 void successfulLogin()          //function for a successful login
 {
     do {
-        cout << "****************************\n";
-        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
-        cout << "****************************\n\n";
+        printHeading();
 
         cout << "Welcome \n\n";
 
@@ -285,7 +249,8 @@ void login()            // Function to log in to an existing account
     string inputUsername;
     string inputPassword;
     bool found = false;
-    int attempts = 0; 
+    int attempts = 0;
+
 
     while (!found && attempts < 3) {
         // Get user details for login
@@ -301,10 +266,11 @@ void login()            // Function to log in to an existing account
         if (infile)
         {
             string line;
-            
 
-            while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {                            
-            
+
+
+            while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {
+
                 if (user.username == inputUsername && user.password == inputPassword)           //compares content of file with user input if match is found successful login
                 {
                     found = true;
@@ -312,7 +278,7 @@ void login()            // Function to log in to an existing account
                     successfulLogin();
                     break;
                 }
-                
+
             }
 
             infile.close();
@@ -323,7 +289,8 @@ void login()            // Function to log in to an existing account
             attempts++;
             if (attempts < 3) {         //statement to limit users to 3 attempts 
                 cout << "Invalid username or password. Please try again.\n";
-            } else {
+            }
+            else {
                 cout << "Too many failed login attempts. Exiting program.\n";
                 exit(0);
             }
@@ -331,6 +298,7 @@ void login()            // Function to log in to an existing account
     }
 }
 // Function for admin login
+
 void adminLogin()
 {
     system("cls");
@@ -348,8 +316,8 @@ void adminLogin()
     ifstream infile("admin.txt");
     if (infile)
     {
-        while (infile >> uName >> password ) {           
 
+        while (infile >> uName >> password) {
             if (uName == inputUsername && password == inputPassword) //compares content of file with user input if match is found successful login
             {
                 found = true;
@@ -361,7 +329,7 @@ void adminLogin()
 
         }
 
-            infile.close();
+        infile.close();
     }
 
     if (!found)
@@ -370,79 +338,14 @@ void adminLogin()
     }
 }
 //combo function defined
-void comboMenu(CurrentOrder& order)
-{
-    int choice;
-
-    // printHeading()
-
-    cout << "Combo Options" << endl;
-    cout << "*************\n" << endl;
-    cout << "All combos include chips and a drink of your choice, drinks can be selected upon pickup\n" << endl;
-
-    cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
-    for (int i = 0; i < comboNames.size(); i++)
-    {
-        cout << "[" << i + 1 << "] " << comboNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << comboPrices[i] << endl;
-    }
-    cout << "[4] Return to Menu" << endl;
-    cout << "[5] Exit\n" << endl;
-
-    cout << "Please choose an option: ";
-    cin >> choice;
-
-    while (choice > 5 || choice < 1)
-    {
-        cout << "Please enter a valid choice: ";
-        cin >> choice;
-    }
-
-    switch (choice)
-    {
-    case 1:
-        order.item = "Sandwich Combo";
-        order.cost = comboPrices[0];
-        break;
-
-    case 2:
-        order.item = "Hot Dog Combo";
-        order.cost = comboPrices[1];
-        break;
-
-    case 3:
-        order.item = "Salad Combo";
-        order.cost = comboPrices[2];
-        break;
-
-    case 4:
-        displayMenu(order);
-        break;
-
-    case 5:
-        exit(0);
-        break;
-
-    default:
-        cout << "Invalid choice, Please try again.\n";
-        break;
-    }
-
-    if (choice >= 1 && choice <= 6)                                                    
-    {
-        cout << "Please enter quantity: ";
-        cin >> order.quantity;                                                         
-        order.cost *= order.quantity;                                                 
-    }
-}
-
-
 
 
 //Admin functions defined:
+//Pulls user information from files and stores in a vector.
 void adminPullUserInfo() {
     // when admin logs in
-    ifstream orders("order.txt"); //opens the order.txt file to read from
-    ifstream users("users.txt"); //opens the users.txt file to read from.
+    ifstream orders("order.txt");   //opens the order.txt file to read from
+    ifstream users("users.txt");    //opens the users.txt file to read from.
     string line;
     string fname, lname, username, password;
     int roomNum;
@@ -456,39 +359,40 @@ void adminPullUserInfo() {
             user.fname = fname;
             user.lastName = lname;
             user.roomNum = roomNum;
-            if (orders.is_open()) { // check if open
-                // pulling that users last order from orders.txt
-                while (getline(orders, line)) { // read line by line
-                    if (line == username) {// if fname found
-                        while (getline(orders, line)) { // continue to read line by line  
+
+            if (orders.is_open()) { //Checks if open
+                //Pulls that users last order from orders.txt
+                while (getline(orders, line)) { // reads the file, line by line
+                    if (line == username) { //if username is found
+                        while (getline(orders, line)) { //Continues to read line by line  
                             user.lastOrder.cost = line;
                             while (getline(orders, line)) {
-                                if (line == "cash" || line == "card" || line == "Cash" || line == "Card") { // store payment method for previous order
+                                if (line == "cash" || line == "card" || line == "Cash" || line == "Card") { //Store payment method for previous order
                                     user.lastOrder.paymentMethod = line;
                                 }
                                 else {
-                                    user.lastOrder.pastOrderItems.push_back(line); //push order item to back of pastOrderItems vector
+                                    user.lastOrder.pastOrderItems.push_back(line); //Pushes order items to back of pastOrderItems vector
                                 }
-                                if (line.empty()) { // break out of statement when empty line is found
+                                if (line.empty()) { //Breaks out of statement when empty line is found
                                     break;
                                 }
                             }
                         }
                     }
                 }
-                userList.push_back(user); // push user struct to back of userList vector
+                userList.push_back(user); //Pushes user struct to back of userList vector
             }
         }
     }
-    users.close();
-    orders.close();
+
+    users.close();  //closes users.txt file
+    orders.close(); //closes order.txt file
 }
+//Prints admin main menu, gives options that admin can choose from.
+
 void adminMainScreen() {
-
-
-    // main menu
-    system("cls");
-    printHeading(); //calls function to print main heading
+    system("cls");  //Clears screen to make console easier to read.
+    printHeading(); //Calls function to print main heading
 
     cout << "Admin options" << endl;
     cout << "*************" << endl << endl;
@@ -498,8 +402,7 @@ void adminMainScreen() {
     cout << "[4] Remove Users" << endl;
     cout << "[5] Log Out and Exit" << endl << endl;
 
-    int choice;
-    // user input
+    int choice; //Variable to hold user input
     cout << "Choose an option: ";
     cin >> choice;
     // switch/case for user input(main menu)
@@ -518,24 +421,22 @@ void adminMainScreen() {
         break;
     case 5:
         exit(0);
-        
-
     }
-
 }
-void adminReviewOrders() {
-    cin.ignore(); //used to clear input stream for following getline code.
-    
-    system("cls"); //clears screen to make the console easier to read
-    printHeading();//prints main heading
 
+//Prints user list, admin can choose a user from this list to view their last order.
+void adminReviewOrders() {
+    cin.ignore();   //Used to clear input stream for the getline code further down.
+
+    system("cls");  //Clears screen to make the console easier to read
+    printHeading(); //Prints main heading
     cout << "Review Orders" << endl;
     cout << "*************" << endl << endl;
 
-    // Prints list of users to allow user to choose from
+
+    // Prints list of users to allow admin to choose from
     int count = 0;
     for (int i = 0; i < userList.size(); i++) {
-        
         if (userList[i].lastOrder.pastOrderItems.size() > 0) { //if users are found with a past order, then they are printed.
             cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
             count++;
@@ -560,21 +461,20 @@ void adminReviewOrders() {
             cin >> tempFName >> tempLName;
 
 
-            // display last order of chosen user
-
-            for (int i = 0; i < userList.size(); i++) { // loop through user list
-                if (tempFName == userList[i].fname && tempLName == userList[i].lastName) {  // if chosen user is found
+            //Display last order of chosen user
+            for (int i = 0; i < userList.size(); i++) { //Loop through user list
+                if (tempFName == userList[i].fname && tempLName == userList[i].lastName) {  //If chosen user is found
                     system("cls");
                     cout << "School Lunch Ordering System" << endl << endl;
                     cout << "Order for " << userList[i].fname << " " << userList[i].lastName << endl;
                     cout << "Class: " << userList[i].roomNum << endl << endl;
-                    for (int j = 0; j < userList[i].lastOrder.pastOrderItems.size(); j++) { // loop through chosen users last order items
-                        cout << userList[i].lastOrder.pastOrderItems[j] << endl; // prints order items
+                    for (int j = 0; j < userList[i].lastOrder.pastOrderItems.size(); j++) { //Loop through chosen users last order items
+                        cout << userList[i].lastOrder.pastOrderItems[j] << endl; //Prints order items
                     }
-                    cout << "Total: $" << userList[i].lastOrder.cost << endl; //prints total.
-                    cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; // prints payment method
+                    cout << "Total: $" << userList[i].lastOrder.cost << endl; //Prints total.
+                    cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; //Prints payment method
 
-                    // review another order or go back to main menu
+                    //Review another order or go back to main menu
                     int option = NULL;
                     while (option != 1 && option != 2) {
                         cout << "[1] Review another order" << endl << "[2] Back to Admin Menu" << endl << endl;
@@ -588,47 +488,38 @@ void adminReviewOrders() {
                             adminMainScreen();
                         default:
                             cout << endl << "Enter an appropriate value" << endl << endl;
-                            
-
                         }
                     }
                 }
             }
         }
         else if (choice == "2") {
-            adminMainScreen(); //returns user to main screen.
+            adminMainScreen(); //Returns user to main screen.
         }
     }
 
-    if (choice != "1" && choice != "2") { //prevents user from putting in an incorrect value.
+    if (choice != "1" && choice != "2") { //Prevents user from putting in an incorrect value.
         cout << endl << "Please enter an appropriate value" << endl << endl;
         adminReviewOrders();
     }
-
-    
-    
 }
+//Pulls new users info from file to store in a vector. Prints this list, admin can choose a user to approve or deny. Updates vector and overwrites file.
 void adminAddUsers() {
     string temp;
-    struct NewUser { //struct to store new user information.
+    struct NewUser { //Struct to store new user information.
         string username;
         string password;
         string fName;
         string lName;
         string classNum;
     };
+    vector <NewUser> usersToApprove; //Vector which uses NewUser struct.
 
-    vector <NewUser> usersToApprove; //vector which uses NewUser struct.
-
-    ifstream newUserFile("newUsers.txt"); //opens newUsers.txt file and reads from it.
+    ifstream newUserFile("newUsers.txt"); //Opens newUsers.txt file and reads from it.
     string u, p, f, l, c;
-
-    system("cls"); //clears screen.
-
+    system("cls"); //Clears screen to make console easier to read.
     if (newUserFile.is_open()) {
-
         while (newUserFile >> u >> p >> f >> l >> c) {
-
             NewUser user;
             user.username = u;
             user.password = p;
@@ -638,12 +529,11 @@ void adminAddUsers() {
             usersToApprove.push_back(user);
         }
 
-        cin.ignore(); // this is placed outside of the start, as it was only needed once to clear input stream.
+        cin.ignore(); // this is placed outside of the start, to fix bug where it would cause the getline input to skip the first character.
 
     start: //Jumps to here when wanting to approve/remove another user.
 
-        // print headings
-
+        //Prints headings
         printHeading();
         cout << "Approve or Remove New Users" << endl;
         cout << "***************************" << endl << endl;
@@ -656,18 +546,15 @@ void adminAddUsers() {
 
         cout << endl << endl << "Enter First and Last names or enter 1 to return to main menu: ";
 
-
         getline(cin, temp); //getline used instead of cin because cin will only read the first word, not the whole line.
 
-
-        ofstream file("users.txt", ios::app); //opens user.txt file to write new user to file.
+        ofstream file("users.txt", ios::app); //Opens user.txt file to write new user to file.
 
         while (temp != "1") {
             string first, last;
             // split user input into two strings
 
             size_t pos = temp.find(' '); //this finds the space
-
             if (pos != string::npos) {
                 first = temp.substr(0, pos); //sets first string to the word before the space
                 last = temp.substr(pos + 1); //sets last string to word that is after the space
@@ -681,37 +568,28 @@ void adminAddUsers() {
             for (int i = 0; i < usersToApprove.size(); i++) {
                 if (usersToApprove[i].fName == first && usersToApprove[i].lName == last) {
 
-                    // flag to track if user is found
-
+                    //Flag to track if user is found
                     found = 1;
 
-                    // approve user if statement yes or no 
-
+                    //Approve user if statement yes or no 
                     cout << "Do you want to approve or remove this user? (approve/remove): ";
                     string approve;
                     cin >> approve;
 
                     if (approve == "approve") {
 
-                        // append file
-
+                        //Append file
                         file << usersToApprove[i].username << endl << usersToApprove[i].password << endl << usersToApprove[i].fName <<
                             endl << usersToApprove[i].lName << endl << usersToApprove[i].classNum << endl << endl;
 
-                        // delete user from usersToApprove vector
-
+                        //Delete user from usersToApprove vector
                         usersToApprove.erase(usersToApprove.begin() + i);
-
                         cout << endl << endl << "User Added Succesfully!" << endl << endl;
-
-
                     }
                     else if (approve == "remove") {
 
                         usersToApprove.erase(usersToApprove.begin() + i);
-
                         cout << endl << endl << "User Removed Succesfully!" << endl << endl;
-
                     }
                 }
             }
@@ -728,19 +606,18 @@ void adminAddUsers() {
 
             if (temp == "2") {
                 system("cls");
-                goto start; // Goes back to start to allow user to add/remove another user.
+                goto start; //Goes back to start to allow user to add/remove another user.
             }
         }
-        file.close(); // close the file
+        file.close(); //Closes the file
         if (temp == "1") {
 
-            // save vector to newUsers.txt and overwrite (leaving only unaproved users in the file)
+            //Save vector to newUsers.txt and overwrite (leaving only unaproved users in the file)
 
             ofstream file("newUsers.txt", ios::trunc);
             for (int i = 0; i < usersToApprove.size(); i++) {
                 // only if vector > 0, add
                 string uName = usersToApprove[i].username;
-                
                 file << usersToApprove[i].username << endl << usersToApprove[i].password << endl << usersToApprove[i].fName <<
                     endl << usersToApprove[i].lName << endl << usersToApprove[i].classNum << endl << endl;
             }
@@ -748,48 +625,48 @@ void adminAddUsers() {
         }
     }
 }
+
+//Prints user list, admin can choose a user then edit their information. Updates vector and overwrites the file
 void adminEditUsers() {
-    system("cls"); //clears screen
+    system("cls"); //clears screen to make console easier to read.
+
 
     //Prints headings
     printHeading();
     cout << "Edit User Details" << endl;
     cout << "*****************" << endl << endl;
 
-    // print list of users from vector
-
+    //Prints list of users from vector
     for (int i = 0; i < userList.size(); i++) {
         cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
     }
 
-    // Gives User option to enter name or return to menu
-
+    //Gives User option to enter name or return to menu
     cout << endl << endl << "Enter First and Last names or enter 1 to return to main menu: ";
     string temp;
     int found = 0;
 
-    cin.ignore(); //this is used to clear the input stream before using getline.
+    cin.ignore(); //This is used to clear the input stream before using getline.
     getline(cin, temp);
     string first, last;
 
-    ofstream file("users.txt", ios::app); //opens user.txt file to write to it.
+
+    ofstream file("users.txt", ios::app); //Opens user.txt file to write to it.
 
     while (temp != "1") {
 
         // split user input into two strings
-
         size_t pos = temp.find(' ');
-
         if (pos != string::npos) {
             first = temp.substr(0, pos);
             last = temp.substr(pos + 1);
         }
 
-        for (int i = 0; i < userList.size(); i++) {
-            if (userList[i].fname == first && userList[i].lastName == last) {
+        for (int i = 0; i < userList.size(); i++) { //For loop to go through user list.
+            if (userList[i].fname == first && userList[i].lastName == last) { //Checks if first and last name match
                 found = 1;
             startEdit:
-                system("cls");
+                system("cls"); //Clears screen to make console easier to read.
                 cout << "Edit details for user: " << userList[i].fname << " " << userList[i].lastName << " (" << userList[i].username << ")" << endl << endl;
                 cout << endl << "What user details do you want to edit?" << endl << endl;
                 cout << "[1] Username" << endl << "[2] Password" << endl << "[3] Last Name" << endl << "[4] Class Number" << endl << endl
@@ -799,7 +676,8 @@ void adminEditUsers() {
                 cin >> option1;
                 string tempUserName, tempPassword, tempLName;
                 int tempClassNum;
-                switch (option1) { //switch case for the different options that admin can choose from.
+                switch (option1) { //Switch case for the different options that admin can choose from.
+
                 case 1:
                     cout << "Enter new username: ";
                     cin >> tempUserName;
@@ -833,34 +711,29 @@ void adminEditUsers() {
                 case 6:
                     adminSaveUsersToFile();
                     adminMainScreen();
-
                 }
             }
             else {
                 found = 0;
             }
         }
-        if (found == 0) { //if name doesn't match, then prints no user found.
+        if (found == 0) { //If name doesn't match, then prints no user found.
             cout << "No user found, please check spelling" << endl << endl;
             system("pause");
-            adminEditUsers(); //returns to start of this function to allow user to re-enter and input.
+            adminEditUsers(); //Returns to start of this function to allow user to re-enter and input.
         }
     }
     // Overwriting the file by saving the vector contents to it.
-
     if (temp == "1") {
         adminSaveUsersToFile();
-
         adminMainScreen();
-
     }
-
 }
+
+//Prints list of all users, admin can choose a user, then remove that user from the app by deleting them from the file.
+
 void adminRemoveUsers() {
-
-
-
-    ofstream file("users.txt", ios::trunc);
+    ofstream file("users.txt", ios::trunc); //Opens file to overwrite contents.
     string temp;
     do {
         system("cls");
@@ -869,8 +742,7 @@ void adminRemoveUsers() {
         cout << "Remove User Menu" << endl;
         cout << "****************" << endl << endl;
 
-        // print list of users from vector
-
+        //Prints list of users from vector
         for (int i = 0; i < userList.size(); i++) {
             cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
         }
@@ -880,19 +752,18 @@ void adminRemoveUsers() {
         int found = 0;
 
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, temp); 
+        getline(cin, temp);
         string first, last;
 
-        // split user input into two strings
-
-        size_t pos = temp.find(' '); //finds the space
-
+        //Splits user input into two strings
+        size_t pos = temp.find(' ');        //finds the space
         if (pos != string::npos) {
-            first = temp.substr(0, pos); //sets first string to word before space
-            last = temp.substr(pos + 1);//sets last string to word after space
+            first = temp.substr(0, pos);    //sets first string to word before space
+            last = temp.substr(pos + 1);    //sets last string to word after space
         }
+
         for (int i = 0; i < userList.size(); i++) {
-            if (userList[i].fname == first && userList[i].lastName == last) {//if first and last name match, following code is executed:
+            if (userList[i].fname == first && userList[i].lastName == last) {   //if first and last name match, following code is executed:
                 found = 1;
                 string choice;
                 cout << endl << "You have choosen " << first << " " << last << " are you sure you would you like to remove this user? [y/n]";
@@ -901,10 +772,8 @@ void adminRemoveUsers() {
                 if (choice == "y" || choice == "Y") {
                     cout << endl << "User has been removed!" << endl << endl;
 
-                    //delete from vector
+                    //Deletes from vector
                     userList.erase(userList.begin() + i);
-
-
                     cout << "Press 1 return to main menu, press 2 to choose a new user: ";
                     cin >> temp;
                 }
@@ -918,20 +787,13 @@ void adminRemoveUsers() {
     } while (temp != "1");
 
     if (temp == "1") {
-
         adminSaveUsersToFile();
         adminMainScreen();
-
     }
-
 }
-void printHeading() {
-    cout << "****************************" << endl;
-    cout << "SCHOOL LUNCH ORDERING SYSTEM" << endl;
-    cout << "****************************" << endl << endl;
-}
+//Saves vector to file by overwriting the files contents.
 void adminSaveUsersToFile() {
-    ofstream file("users.txt", ios::trunc);
+    ofstream file("users.txt", ios::trunc); //Opens file to overwrite the contents.
     system("pause");
     for (int i = 0; i < userList.size(); i++) {
         file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
@@ -940,7 +802,6 @@ void adminSaveUsersToFile() {
     }
     file.close();
 }
-
 
 
 // order menu functions
@@ -1024,13 +885,13 @@ void displayMenu(CurrentOrder& order)                           // The displayMe
 }
 void saveOrder()                      // The saveOrder function takes two parameters - CurrentOrder with object order, and a vector of CurrentOrder objects called orders. This function writes data from order to a file named 'order.txt'
 {
-   
+
     ofstream orderFile;                                                                // Writes to the 'order.txt' file declared as ofstream named orderFile
     orderFile.open("order.txt", ios::out | ios::app);                                  // Opens the 'order.txt' file with output and append
     orderFile << user.username << endl << total << endl << user.lastOrder.paymentMethod << endl;           // Writes to the file from order to orderFile in the order of item, qunatity and cost. Fixed and setprecision(2) is used to ensure the decimal is placed in the correct place
-    
+
     for (int i = 0; i < orders.size(); i++) {
-        orderFile << orders[i].quantity << "x " << orders[i].item << endl; 
+        orderFile << orders[i].quantity << "x " << orders[i].item << endl;
     }
     orderFile << endl;
 
@@ -1064,16 +925,16 @@ void orderSummary(vector<CurrentOrder>& orders)                                 
 }
 void processOrder()                                                      // The processOrder() function takes no arguments and calls multiple functions that are defined above to implememt the ordering process
 {
-    
-                                                        // Declaring variable total to keep track of total costs - set to 0
+
+    // Declaring variable total to keep track of total costs - set to 0
     char repeat;                                                         // Declaring variable repeat to take user input
-    
+
     do                                                                   // do-while loop that will continue to run until user selects 'n'
     {
-        
+
         CurrentOrder order;                                                 // CurrentOrder struct called order
         displayMenu(order);                                              // Calls the displayMenu() function. order is passed to the function as a parameter/argument to allow user input to be kept updated
-                                             
+
         displayOrder(order);                                             // Calls the displayOrder() function. Which displays the info of order - displaying the item, quantity and cost of order
         orders.push_back(order);
         total += order.cost;                                             // Used to calculate the total cost of each order. When a new order is entered, the order.cost is added to the total
@@ -1085,9 +946,9 @@ void processOrder()                                                      // The 
     } while (repeat == 'y' || repeat == 'Y');                            // Runs the do-while loop if the condition 'y' is entered by the user
 
     orderSummary(orders);                                                // Calls the orderSummary() function to display every order ordered - orders is the argument
-    displayTotal(total); 
+    displayTotal(total);
     // Calls the displayTotal() function to display that calculated cost of the entire order - total is the argument
-   
+
     secondMenu();                                                        // Calls the secondMenu() function which will display another menu to the user
 }
 void secondMenu()                                                        // The secondMenu() function displays another menu to the user after they have added all items to their order
@@ -1121,3 +982,126 @@ void secondMenu()                                                        // The 
         break;
     }
 }
+
+void comboMenu(CurrentOrder& order)
+{
+    int choice;
+
+    // printHeading()
+
+    cout << "Combo Options" << endl;
+    cout << "*************\n" << endl;
+    cout << "All combos include chips and a drink of your choice, drinks can be selected upon pickup\n" << endl;
+
+    cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
+    for (int i = 0; i < comboNames.size(); i++)
+    {
+        cout << "[" << i + 1 << "] " << comboNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << comboPrices[i] << endl;
+    }
+    cout << "[4] Return to Menu" << endl;
+    cout << "[5] Exit\n" << endl;
+
+    cout << "Please choose an option: ";
+    cin >> choice;
+
+    while (choice > 5 || choice < 1)
+    {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
+    }
+
+    switch (choice)
+    {
+    case 1:
+        order.item = "Sandwich Combo";
+        order.cost = comboPrices[0];
+        break;
+
+    case 2:
+        order.item = "Hot Dog Combo";
+        order.cost = comboPrices[1];
+        break;
+
+    case 3:
+        order.item = "Salad Combo";
+        order.cost = comboPrices[2];
+        break;
+
+    case 4:
+        displayMenu(order);
+        break;
+
+    case 5:
+        exit(0);
+        break;
+
+    default:
+        cout << "Invalid choice, Please try again.\n";
+        break;
+    }
+
+    if (choice >= 1 && choice <= 6)
+    {
+        cout << "Please enter quantity: ";
+        cin >> order.quantity;
+        order.cost *= order.quantity;
+    }
+}
+void payment() {            //function for payment section
+    string discount;
+    string cardNumber;
+    int cvc;
+
+    do {
+        printHeading();
+
+        cout << "Payment options \n";
+        cout << "*************** \n\n";
+
+        cout << "Your order: \n";
+        for (int i = 0; i < orders.size(); i++) {           //displays the users order
+            cout << orders[i].quantity << "X " << orders[i].item << endl;
+        }
+        cout << "Total cost: \t \t" << total << endl;           // total displays the total cost of the order
+
+        cout << "[1] Enter discount code \n";
+        cout << "[2] Pay with cash \n";
+        cout << "[3] Pay with card \n";
+
+        cout << "Please select an option: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            cout << "Use discount code YouGetAnA+ for 5% off your order! \n";
+            cout << "Please enter your discount code: \n";
+            discountSearch(total);
+            break;
+
+        case 2:
+            cout << "Please make your payment when collecting your order from the lunchroom\n\n";
+            user.lastOrder.paymentMethod = "cash";
+            saveOrder();
+            successfulLogin();
+            break;
+
+        case 3:
+            cout << "please enter your card number: \n";
+            cin >> cardNumber;
+            cout << "please enter your cvc number: \n";
+            cin >> cvc;
+            cout << "Your payment has been successful! Please collect your order from the lunchroom at lunch time.\n\n";
+            user.lastOrder.paymentMethod = "card";
+            saveOrder();
+            successfulLogin();
+            break;
+
+        default:
+            cout << "Invalid choice, Please try again.\n";
+            break;
+
+        }
+    } while (choice != 3);
+}
+

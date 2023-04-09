@@ -1,18 +1,37 @@
-using namespace std;
-
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
 #include <string>
+#include <iomanip>
+
+using namespace std;
 
 
-// structs to hold users and their last order
 
+int choice;
+bool found = false;
+double total = 0;  // declared globally so that all functions have access to it (payment function, process oder, display total)
+
+
+struct CurrentOrder                                // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter)
+{
+    string item;                                   // Structure member type string
+    int quantity;                                  // Structure member type int
+    double cost;                                   // Structure member type double
+
+    CurrentOrder(int a = 0, double b = 0.00)      // Initialising quantity and cost members with default constructor 
+    {
+        quantity = a;
+        cost = b;
+    }
+};
+//Admin Structures
 struct LastOrder {
     string paymentMethod;
-    vector<string> pastOrders;
+    string cost;
+    vector<string> pastOrderItems;
 };
 struct Users {
     string username;
@@ -22,13 +41,19 @@ struct Users {
     int roomNum = NULL;
     LastOrder lastOrder;
 };
+Users user;
 
 
 
-// vector to hold users from users.txt
+
+vector<double> comboPrices = { 15.00, 13.50, 15.00 };
+vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
+vector<CurrentOrder> orders;
+vector<double> itemPrices = { 8.00, 6.50, 5.00, 6.00, 3.00, 4.00 };                                      // Vector to store the item prices
+vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink" };          // Vector to store item names
 vector <Users> userList;
 
-// admin functions declared
+// admin function prototypes
 void adminMainScreen();
 void adminReviewOrders();
 void adminPullUserInfo();
@@ -36,84 +61,472 @@ void adminAddUsers();
 void adminEditUsers();
 void adminRemoveUsers();
 void printHeading();
+void adminSaveUsersToFile();
+// order menu functions
+void displayMenu(CurrentOrder& order);                                   // '&' is used to pass by reference. Changes made to 'order' within the 'displayMenu' function will affect the CurrentOrder struct            
+void saveOrder();
+void displayOrder(CurrentOrder& order);
+void orderSummary(vector<CurrentOrder>& orders);
+void displayTotal(double total);
+void processOrder();
+void comboMenu(CurrentOrder& order);
+void secondMenu();
+// signup-login function prototypes
+void createAccount();
+void successfulLogin();
+void login();
+void adminLogin();
+// Payment function prototypes
+void discountSearch(double& total);
+void payment();
 
-string temp;
+
+
 int main()
 {
-    adminPullUserInfo();
-    adminMainScreen();
+   
+    system("cls");
+    cout << "*********************************************\n";
+    cout << "WELCOME TO THE SCHOOLS LUNCH ORDERING SYSTEM!\n";
+    cout << "*********************************************\n\n";
+
+    do {
+        cout << "Please choose an option: \n";
+        cout << "1. Create an account \n";
+        cout << "2. Parent/Student Login \n";
+        cout << "3. Admin login \n";
+        cout << "4. Exit \n\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            createAccount();
+            break;
+
+        case 2:
+            login();
+            break;
+
+        case 3:
+            adminLogin();
+            break;
+
+        case 4:
+            cout << "Exiting program...\n";
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again.\n";
+            break;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
 
 
 
+//payment functions defined:
+/*
+void discountSearch()           //Function to search file for vaild discount code
+{
+    string discount;
+    ifstream infile("discountCodes.txt");
+    if (infile)
+    {
+        string line;
 
+        while (getline(infile, line))
+        {
+            if (line.find(discount) != string::npos)
+            {
+                found = true;
+                // Code to apply discount goes here, Waiting on orderTotal function.
+                cout << "A 15% discount has been applied to your order!\n\n";
+                break;
+            }
+        }
 
+        infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid discount code, Please try again.\n\n";
+    }
+}
+*/
+
+void discountSearch(double& total)           //Function to search file for valid discount code
+{
+    string discount;
+    ifstream infile("discountCodes.txt");
+    if (infile)
+    {
+        string line;
+
+        while (getline(infile, line))
+        {
+            if (line.find(discount) != string::npos)
+            {
+                found = true;
+                // Code to apply discount goes here, Waiting on orderTotal function.
+                double discountAmount = total * 0.05;
+                total -= discountAmount;
+                cout << "A 5% discount has been applied to your order!\n\n";
+                break;
+            }
+        }
+
+        infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid discount code, Please try again.\n\n";
+    }
+    orders.push_back(total);
 
 }
 
-//Admin functions defined:
+void payment() {            //function for payment section
+    string discount;
+    string cardNumber;
+    int cvc;
 
+    do {
+        cout << "****************************\n";
+        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
+        cout << "****************************\n\n";
+
+        cout << "Payment options \n";
+        cout << "*************** \n\n";
+
+        cout << "Your order: \n";
+        for (int i = 0; i < orders.size(); i++) {           //displays the users order
+            cout << orders[i].quantity << "X " << orders[i].item << endl;
+        }
+        cout << "Total cost: \t \t" << total << endl;           // total displays the total cost of the order
+
+        cout << "[1] Enter discount code \n";
+        cout << "[2] Pay with cash \n";
+        cout << "[3] Pay with card \n";
+
+        cout << "Please select an option: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            cout << "Use discount code YouGetAnA+ for 5% off your order! \n";
+            cout << "Please enter your discount code: \n";
+            cin >> discount;
+            discountSearch(total);
+            break;
+
+        case 2:
+            cout << "Please make your payment when collecting your order from the lunchroom\n\n";
+            user.lastOrder.paymentMethod = "cash";
+            saveOrder();
+            successfulLogin();
+            break;
+
+        case 3:
+            cout << "please enter your card number: \n";
+            cin >> cardNumber;
+            cout << "please enter your cvc number: \n";
+            cin >> cvc;
+            cout << "Your payment has been successful! Please collect your order from the lunchroom at lunch time.\n\n";
+            user.lastOrder.paymentMethod = "card";
+            saveOrder();
+            successfulLogin();
+            break;
+
+        default:
+            cout << "Invalid choice, Please try again.\n";
+            break;
+
+        }
+    } while (choice != 3);
+}
+//signup-login functions defined:
+void createAccount()            //function to create a new account
+{
+    Users user;
+
+    //User details
+    cout << "\n\n";
+    cout << "CREATE A NEW ACCOUNT \n";
+    cout << "Please enter your first name: ";
+    cin >> user.fname;
+    cout << "Please enter your last name: ";
+    cin >> user.lastName;
+    cout << "Please enter the students classroom number: ";
+    cin >> user.roomNum;
+    cout << "Please enter a username: ";
+    cin >> user.username;
+    cout << "Please enter a password: ";
+    cin >> user.password;
+
+    //Open file and append user details
+    ofstream outfile("newUsers.txt", ios::app);
+    outfile << user.username << "\n" << user.password << "\n" << user.fname << "\n" << user.lastName << "\n" << user.roomNum << endl;
+    outfile.close();
+
+    cout << "Account created successfully. Please wait for admin approval.\n";
+}
+void successfulLogin()          //function for a successful login
+{
+    do {
+        cout << "****************************\n";
+        cout << "SCHOOL LUNCH ORDERING SYSTEM\n";
+        cout << "****************************\n\n";
+
+        cout << "Welcome \n\n";
+
+        cout << "[1] Create new order \n";
+        cout << "[2] Exit \n\n";
+
+        cout << "Please select an option: \n";
+        cin >> choice;
+
+
+        switch (choice)
+        {
+        case 1:
+            processOrder();
+            break;
+
+        case 2:
+            exit(0);            //exit(0) ends program
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again.\n";
+            break;
+        }
+    } while (choice != 2);
+}
+void login()            // Function to log in to an existing account
+{
+    string inputUsername;
+    string inputPassword;
+    bool found = false;
+    int attempts = 0; 
+
+    while (!found && attempts < 3) {
+        // Get user details for login
+        cout << "\n\n";
+        cout << "LOG IN TO AN EXISTING ACCOUNT\n";
+        cout << "Please enter your username: ";
+        cin >> inputUsername;
+        cout << "Please enter your password: ";
+        cin >> inputPassword;
+
+        // Open file to find login
+        ifstream infile("users.txt");
+        if (infile)
+        {
+            string line;
+            
+
+            while (infile >> user.username >> user.password >> user.fname >> user.lastName >> user.roomNum) {                            
+            
+                if (user.username == inputUsername && user.password == inputPassword)           //compares content of file with user input if match is found successful login
+                {
+                    found = true;
+                    cout << "Login successful.\n";
+                    successfulLogin();
+                    break;
+                }
+                
+            }
+
+            infile.close();
+        }
+
+        if (!found)
+        {
+            attempts++;
+            if (attempts < 3) {         //statement to limit users to 3 attempts 
+                cout << "Invalid username or password. Please try again.\n";
+            } else {
+                cout << "Too many failed login attempts. Exiting program.\n";
+                exit(0);
+            }
+        }
+    }
+}
+// Function for admin login
+void adminLogin()
+{
+    system("cls");
+    string inputUsername, inputPassword, uName, password;
+    bool found = false;
+
+    // Get user details for login
+    cout << "LOG IN TO AN EXISTING ACCOUNT \n";
+    cout << "Please enter your username: ";
+    cin >> inputUsername;
+    cout << "Please enter your password: ";
+    cin >> inputPassword;
+
+    // Open file to find login
+    ifstream infile("admin.txt");
+    if (infile)
+    {
+        while (infile >> uName >> password ) {           
+
+            if (uName == inputUsername && password == inputPassword) //compares content of file with user input if match is found successful login
+            {
+                found = true;
+                cout << "Login successful.\n";
+                adminPullUserInfo();
+                adminMainScreen();
+                break;
+            }
+
+        }
+
+            infile.close();
+    }
+
+    if (!found)
+    {
+        cout << "Invalid username or password. Please try again.\n";
+    }
+}
+//combo function defined
+void comboMenu(CurrentOrder& order)
+{
+    int choice;
+
+    // printHeading()
+
+    cout << "Combo Options" << endl;
+    cout << "*************\n" << endl;
+    cout << "All combos include chips and a drink of your choice, drinks can be selected upon pickup\n" << endl;
+
+    cout << "Item:\t\t\tCost:\n" << endl;                         // Displays the menu options with prices
+    for (int i = 0; i < comboNames.size(); i++)
+    {
+        cout << "[" << i + 1 << "] " << comboNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << comboPrices[i] << endl;
+    }
+    cout << "[4] Return to Menu" << endl;
+    cout << "[5] Exit\n" << endl;
+
+    cout << "Please choose an option: ";
+    cin >> choice;
+
+    while (choice > 5 || choice < 1)
+    {
+        cout << "Please enter a valid choice: ";
+        cin >> choice;
+    }
+
+    switch (choice)
+    {
+    case 1:
+        order.item = "Sandwich Combo";
+        order.cost = comboPrices[0];
+        break;
+
+    case 2:
+        order.item = "Hot Dog Combo";
+        order.cost = comboPrices[1];
+        break;
+
+    case 3:
+        order.item = "Salad Combo";
+        order.cost = comboPrices[2];
+        break;
+
+    case 4:
+        displayMenu(order);
+        break;
+
+    case 5:
+        exit(0);
+        break;
+
+    default:
+        cout << "Invalid choice, Please try again.\n";
+        break;
+    }
+
+    if (choice >= 1 && choice <= 6)                                                    
+    {
+        cout << "Please enter quantity: ";
+        cin >> order.quantity;                                                         
+        order.cost *= order.quantity;                                                 
+    }
+}
+
+
+
+
+//Admin functions defined:
 void adminPullUserInfo() {
     // when admin logs in
 
     ifstream users("users.txt");
-    ifstream orders("orders.txt");
+    ifstream orders("order.txt");
     string line;
     string fname, lname, username, password;
     int roomNum;
 
-
-
-
     if (users.is_open()) {
-
-
         // pulling user from users.txt
         while (users >> username >> password >> fname >> lname >> roomNum) {
             // storing that user in a struct
-            Users user;
             user.username = username;
             user.password = password;
             user.fname = fname;
             user.lastName = lname;
             user.roomNum = roomNum;
-            ifstream orders("orders.txt");
+            ifstream orders("order.txt");
             if (orders.is_open()) { // check if open
                 // pulling that users last order from orders.txt
                 while (getline(orders, line)) { // read line by line
-                    if (line == fname) // if fname found
-                        while (getline(orders, line)) { // continue to read line by line                      
-                            if (line == "cash" || line == "card" || line == "Cash" || line == "Card") { // store payment method for previous order
-                                user.lastOrder.paymentMethod = line;
-                            }
-                            else {
-                                user.lastOrder.pastOrders.push_back(line); //push order item to back of pastOrderItems vector
-                            }
-                            if (line.empty()) { // break out of statement when empty line is found
-                                break;
+                    if (line == username) {// if fname found
+                        while (getline(orders, line)) { // continue to read line by line  
+                            user.lastOrder.cost = line;
+                            while (getline(orders, line)) {
+                                if (line == "cash" || line == "card" || line == "Cash" || line == "Card") { // store payment method for previous order
+                                    user.lastOrder.paymentMethod = line;
+                                }
+                                else {
+                                    user.lastOrder.pastOrderItems.push_back(line); //push order item to back of pastOrderItems vector
+                                }
+                                if (line.empty()) { // break out of statement when empty line is found
+                                    break;
+                                }
                             }
                         }
+                    }
                 }
                 userList.push_back(user); // push user struct to back of userList vector
             }
         }
     }
-
     users.close();
 }
-
 void adminMainScreen() {
 
 
     // main menu
     system("cls");
-    printHeading();
+    printHeading(); //calls function to print main heading
+
     cout << "Admin options" << endl;
     cout << "*************" << endl << endl;
     cout << "[1] Review Orders" << endl;
     cout << "[2] Add Users" << endl;
     cout << "[3] Edit User Details" << endl;
     cout << "[4] Remove Users" << endl;
-    cout << "[5] Log Out" << endl << endl;
+    cout << "[5] Log Out and Exit" << endl << endl;
 
     int choice;
     // user input
@@ -134,32 +547,39 @@ void adminMainScreen() {
         adminRemoveUsers();
         break;
     case 5:
-        exit;
-        // login screen function here/return to main()
+        exit(0);
+        
 
     }
 
-
 }
-
-
 void adminReviewOrders() {
-
-    system("cls");
-    printHeading();
+    cin.ignore(); //used to clear input stream for following getline code.
+    
+    system("cls"); //clears screen
+    printHeading();//prints main heading
 
     cout << "Review Orders" << endl;
     cout << "*************" << endl << endl;
 
-    // choose from list of users
-
+    // Prints list of users to allow user to choose from
+    int count = 0;
     for (int i = 0; i < userList.size(); i++) {
-        cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
+        
+        if (userList[i].lastOrder.pastOrderItems.size() > 0) {
+            cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
+            count++;
+        }
+    }
+    if (count == 0) {
+        cout << "No users with orders found, returning you to the main menu" << endl << endl;
+        system("pause");
+        adminMainScreen();
     }
     cout << endl << endl << "Enter 1 to review a users order or 2 to go back to main menu: ";
 
     string choice;
-    cin.ignore();
+    
     getline(cin, choice);
 
     while (choice == "1" || choice == "2") {
@@ -178,57 +598,47 @@ void adminReviewOrders() {
                     cout << "School Lunch Ordering System" << endl << endl;
                     cout << "Order for " << userList[i].fname << " " << userList[i].lastName << endl;
                     cout << "Class: " << userList[i].roomNum << endl << endl;
-                    for (int j = 0; j < userList[i].lastOrder.pastOrders.size(); j++) { // loop through chosen users last order items
-                        if (userList[i].lastOrder.pastOrders.size() > 0) { // make sure there are items
-                            cout << userList[i].lastOrder.pastOrders[j] << endl; // print order items
-                        }
-                        else {
-                            cout << "no previous order found" << endl;
+                    for (int j = 0; j < userList[i].lastOrder.pastOrderItems.size(); j++) { // loop through chosen users last order items
+                        cout << userList[i].lastOrder.pastOrderItems[j] << endl; // print order items
+                    }
+                    cout << "Total: $" << userList[i].lastOrder.cost << endl;
+                    cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; // print payment method  
+                    // review another order or go back to main menu
+                    int option = NULL;
+                    while (option != 1 && option != 2) {
+                        cout << "[1] Review another order" << endl << "[2] Back to Admin Menu" << endl << endl;
+                        cout << "Choose an option: ";
+
+                        cin >> option;
+                        switch (option) {
+                        case 1:
+                            adminReviewOrders();
+                        case 2:
+                            adminMainScreen();
+                        default:
+                            cout << endl << "Enter an appropriate value" << endl << endl;
+                            
+
                         }
                     }
-                    cout << "Combo Discount: -$2" << endl;
-                    cout << "Total: $10" << endl;
-                    cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; // print payment method      
                 }
             }
         }
         else if (choice == "2") {
-            adminMainScreen();
+            adminMainScreen(); //returns user to main screen.
         }
-
-
     }
-    if (choice != "1" && choice != "2") {
+
+    if (choice != "1" && choice != "2") { //prevents user from putting in an incorrect value.
         cout << endl << "Please enter an appropriate value" << endl << endl;
+        adminReviewOrders();
     }
 
-
-
-
-    // review another order or go back to main menu
-    int option = NULL;
-    while (option != 1 && option != 2) {
-        cout << "[1] Review another order" << endl << "[2] Back to Admin Menu" << endl << endl;
-        cout << "Choose an option: ";
-
-        cin >> option;
-        switch (option) {
-        case 1:
-            adminReviewOrders();
-        case 2:
-            adminMainScreen();
-        default:
-            cout << endl << "Enter an appropriate value" << endl << endl;
-
-        }
-
-    }
-
-
+    
+    
 }
-
 void adminAddUsers() {
-
+    string temp;
     struct NewUser {
         string username;
         string password;
@@ -257,8 +667,9 @@ void adminAddUsers() {
             usersToApprove.push_back(user);
         }
 
-        cin.ignore();
-    start:
+        cin.ignore(); // this is placed outside of the start, as it was only needed once to clear input stream.
+
+    start: //Jumps to here when wanting to approve/remove another user.
 
         // print headings
 
@@ -267,7 +678,7 @@ void adminAddUsers() {
         cout << "***************************" << endl << endl;
 
 
-
+        // Prints user list to console from vector.
         for (int i = 0; i < usersToApprove.size(); i++) {
             cout << usersToApprove[i].fName << " " << usersToApprove[i].lName << " Class Number: " << usersToApprove[i].classNum << endl;
         }
@@ -275,7 +686,7 @@ void adminAddUsers() {
         cout << endl << endl << "Enter First and Last names or enter 1 to return to main menu: ";
 
 
-        getline(cin, temp); //getline is used because using only cin would read the first word only, not both words.
+        getline(cin, temp); //getline used instead of cin because cin will only read the first word, not the whole line.
 
 
         ofstream file("users.txt", ios::app); //opens user.txt file to write new user to file.
@@ -292,7 +703,6 @@ void adminAddUsers() {
             }
 
             // APPROVE USER
-
             // add user to users.txt
 
             int found = 0; // 0 if false, 1 if true
@@ -347,7 +757,7 @@ void adminAddUsers() {
 
             if (temp == "2") {
                 system("cls");
-                goto start;
+                goto start; // Goes back to start to allow user to add/remove another user.
             }
         }
         file.close(); // close the file
@@ -358,6 +768,8 @@ void adminAddUsers() {
             ofstream file("newUsers.txt", ios::trunc);
             for (int i = 0; i < usersToApprove.size(); i++) {
                 // only if vector > 0, add
+                string uName = usersToApprove[i].username;
+                
                 file << usersToApprove[i].username << endl << usersToApprove[i].password << endl << usersToApprove[i].fName <<
                     endl << usersToApprove[i].lName << endl << usersToApprove[i].classNum << endl << endl;
             }
@@ -365,11 +777,10 @@ void adminAddUsers() {
         }
     }
 }
-
-
 void adminEditUsers() {
-start:
-    system("cls");
+    system("cls"); //clears screen
+
+    //Prints headings
     printHeading();
     cout << "Edit User Details" << endl;
     cout << "*****************" << endl << endl;
@@ -380,13 +791,13 @@ start:
         cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
     }
 
-    // menu
+    // Gives User option to enter name or return to menu
 
     cout << endl << endl << "Enter First and Last names or enter 1 to return to main menu: ";
     string temp;
     int found = 0;
 
-    cin.ignore();
+    cin.ignore(); //this is used to clear the input stream before using getline.
     getline(cin, temp);
     string first, last;
 
@@ -449,10 +860,8 @@ start:
                 case 5:
                     adminEditUsers();
                 case 6:
+                    adminSaveUsersToFile();
                     adminMainScreen();
-
-
-                    /// SAVE USERLISTS VECTOR TO FILE, OVERWRITE
 
                 }
             }
@@ -460,35 +869,22 @@ start:
                 found = 0;
             }
         }
-        if (found == 0) {
-            cout << "No user found" << endl << endl;
+        if (found == 0) { //if name doesn't match, then prints no user found.
+            cout << "No user found, please check spelling" << endl << endl;
             system("pause");
-            goto start;
+            adminEditUsers(); //returns to start of this function to allow user to re-enter and input.
         }
     }
+    // Overwriting the file by saving the vector contents to it.
 
     if (temp == "1") {
-        ofstream file("users.txt", ios::trunc);
-
-        for (int i = 0; i < userList.size(); i++) {
-            file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
-                userList[i].lastName << endl << userList[i].roomNum << endl << endl;
-
-
-
-            /// fix saving not working, fix no user found bug
-
-        }
-        file.close();
+        adminSaveUsersToFile();
 
         adminMainScreen();
 
-
     }
 
-
 }
-
 void adminRemoveUsers() {
 
 
@@ -513,8 +909,9 @@ void adminRemoveUsers() {
         int found = 0;
 
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, temp);
+        getline(cin, temp); 
         string first, last;
+
         // split user input into two strings
 
         size_t pos = temp.find(' '); //finds the space
@@ -551,22 +948,205 @@ void adminRemoveUsers() {
 
     if (temp == "1") {
 
-        for (int i = 0; i < userList.size(); i++) {
-
-            file << userList[i].username << endl << userList[i].password << endl << userList[i].fname <<
-                endl << userList[i].lastName << endl << userList[i].roomNum << endl << endl;
-
-
-        }
-        file.close();
+        adminSaveUsersToFile();
         adminMainScreen();
 
     }
 
 }
-
 void printHeading() {
     cout << "****************************" << endl;
     cout << "SCHOOL LUNCH ORDERING SYSTEM" << endl;
     cout << "****************************" << endl << endl;
+}
+void adminSaveUsersToFile() {
+    ofstream file("users.txt", ios::trunc);
+    system("pause");
+    for (int i = 0; i < userList.size(); i++) {
+        file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
+            userList[i].lastName << endl << userList[i].roomNum << endl << endl;
+
+    }
+    file.close();
+}
+
+
+
+// order menu functions
+void displayMenu(CurrentOrder& order)                           // The displayMenu() function displays the menu options and prices by calling their respective vectors and storing user input in the struct CurrentOrder
+{
+    int choice;                                                 // Declaring the variable 'choice' to store the user's input
+
+    printHeading();                                             // Calls the printHeading() function to display the 'school lunch ordering' heading
+
+    cout << "Food Menu" << endl;                                // Food menu heading
+    cout << "*********\n" << endl;
+
+    cout << "Item:\t\t\tCost:\n" << endl;                       // Displays the menu options with prices
+    for (int i = 0; i < itemNames.size(); i++)                  // For loop to iterate through the itemNames vector (and itemPrices)
+    {
+        cout << "[" << i + 1 << "] " << itemNames[i] << "\t\t$" << setfill('0') << fixed << setprecision(2) << itemPrices[i] << endl;   // [" << i + 1 << "] displays a number next to each menu item. itemNames[i] retrieves the menu item at index i. fixed and setprecision(2) ensure that the price is displayed with the correct decimal placement i.e 0.00. itemPrices[i] retrieves the price of the menu item
+    }
+
+    cout << "[7] Combo Meal\n" << endl;                         // Displays the combo meal option 
+    cout << "[8] Cancel\n" << endl;                             // Displays the cancel option
+    cout << "Please choose an option: ";
+    cin >> choice;                                              // Get user input and stores it in the variable 'choice'
+    cout << endl;
+
+    while (choice > 8 || choice < 1)                            // Check if the user's choice is within range. If user selects a number above 8 and below 1, the following will be displayed
+    {
+        cout << "Please enter a valid choice: " << endl;        // Will display text to the user
+        cin >> choice;
+    }
+
+    switch (choice)                                             // Switch statement to perform cases dependent on the user's input
+    {
+    case 1:
+        order.item = itemNames[0];                              // Assigns the user input to item 'sandwich' which is stored in the itemNames vector
+        order.cost = itemPrices[0];                             // Assigns the user input to the cost of 'sandwich' which is stored in the itemPrices vector                         
+        break;
+
+    case 2:
+        order.item = itemNames[1];                              // Assigns the user input to item 'hot dog' which is stored in the itemNames vector
+        order.cost = itemPrices[1];                             // Assigns the user input to the cost of 'hot dog' which is stored in the itemPrices vector  
+        break;
+
+    case 3:
+        order.item = itemNames[2];                              // Assigns the user input to item 'chips' which is stored in the itemNames vector
+        order.cost = itemPrices[2];                             // Assigns the user input to the cost of 'chips' which is stored in the itemPrices vector  
+        break;
+
+    case 4:
+        order.item = itemNames[3];                              // Assigns the user input to item 'salad' which is stored in the itemNames vector
+        order.cost = itemPrices[3];                             // Assigns the user input to the cost of 'salad' which is stored in the itemPrices vector  
+        break;
+
+    case 5:
+        order.item = itemNames[4];                              // Assigns the user input to item 'water' which is stored in the itemNames vector
+        order.cost = itemPrices[4];                             // Assigns the user input to the cost of 'water' which is stored in the itemPrices vector  
+        break;
+
+    case 6:
+        order.item = itemNames[5];                              // Assigns the user input to item 'fizzy drink' which is stored in the itemNames vector
+        order.cost = itemPrices[5];                             // Assigns the user input to the cost of 'fizzy drink' which is stored in the itemPrices vector  
+        break;
+
+    case 7:                                                                            // If option 7 is selected, it will call the comboMenu() function to display the combo options
+        comboMenu(order);
+        break;
+
+    case 8:                                                                            // If option 8 is selected by the user,  it will exit out of the food menu
+        // Return to previous menu, or cancel - if cancel, implement below code
+        cout << endl;
+        cout << "Goodbye, have a great day....";
+        cout << endl;
+        break;
+    }
+
+    if (choice >= 1 && choice <= 6)                                                    // If statement using logical AND operator. To check if user choice is greater or equal to 1 and if choice is less than or equal to 6. If condition is true, the below code will run
+    {
+        cout << "Please enter quantity: ";
+        cin >> order.quantity;                                                         // Stores user input (quantity) in order.quantity
+        order.cost *= order.quantity;                                                  // Multiplies order.cost by order.quantity
+    }
+}
+void saveOrder()                      // The saveOrder function takes two parameters - CurrentOrder with object order, and a vector of CurrentOrder objects called orders. This function writes data from order to a file named 'order.txt'
+{
+   
+    ofstream orderFile;                                                                // Writes to the 'order.txt' file declared as ofstream named orderFile
+    orderFile.open("order.txt", ios::out | ios::app);                                  // Opens the 'order.txt' file with output and append
+    orderFile << user.username << endl << total << endl << user.lastOrder.paymentMethod << endl;           // Writes to the file from order to orderFile in the order of item, qunatity and cost. Fixed and setprecision(2) is used to ensure the decimal is placed in the correct place
+    
+    for (int i = 0; i < orders.size(); i++) {
+        orderFile << orders[i].quantity << "x " << orders[i].item << endl; 
+    }
+    orderFile << endl;
+
+    orderFile.close();                                                                 // Closes the file
+}
+void displayOrder(CurrentOrder& order)                                                 // The displayOrder() function displays the order item, quantity and cost when called. Uses the CurrentOrder struct as a parameter       
+{
+    cout << endl;
+    cout << "Item: " << order.item << endl;                                            // Will display the item ordered
+    cout << "Quantity: " << order.quantity << endl;                                    // Will display the quantity chosen
+    cout << "Cost: $" << fixed << setprecision(2) << order.cost << endl;               // Will display the cost of item + the quantity ordered. Fixed + setprecision is used to ensure the format of the decimal point is diplayed correctly   
+}
+void displayTotal(double total)                                                        // The displayTotal() function will display the total cost of each item and quantity ordered. double total as a parameter
+{
+    cout << endl;
+    cout << "******************" << endl;
+    cout << "Total cost: $" << fixed << setprecision(2) << total << endl;              // Will display the total cost when called. Fixed and setprecision(2) is used to ensure the decimal is in the correct place
+    cout << "******************" << endl;
+}
+void orderSummary(vector<CurrentOrder>& orders)                                        // The orderSummary will display the entire order. A vector of CurrentOrder orders is included in the parenthesis to hold CurrentOrder objects
+{
+    cout << endl;
+    cout << "*************\n";
+    cout << "Order Summary" << endl;                                                   // Heading for order summary
+    cout << "*************\n";
+
+    for (int i = 0; i < orders.size(); i++)                                            // For loop iterates through the elements in orders
+    {
+        displayOrder(orders[i]);                                                       // Calls the displayOrder() function to display each order
+    }
+}
+void processOrder()                                                      // The processOrder() function takes no arguments and calls multiple functions that are defined above to implememt the ordering process
+{
+    
+                                                        // Declaring variable total to keep track of total costs - set to 0
+    char repeat;                                                         // Declaring variable repeat to take user input
+    
+    do                                                                   // do-while loop that will continue to run until user selects 'n'
+    {
+        
+        CurrentOrder order;                                                 // CurrentOrder struct called order
+        displayMenu(order);                                              // Calls the displayMenu() function. order is passed to the function as a parameter/argument to allow user input to be kept updated
+                                             
+        displayOrder(order);                                             // Calls the displayOrder() function. Which displays the info of order - displaying the item, quantity and cost of order
+        orders.push_back(order);
+        total += order.cost;                                             // Used to calculate the total cost of each order. When a new order is entered, the order.cost is added to the total
+
+        cout << endl;
+        cout << "Do you want to add another item? (y/n) ";               // Asks the user if they want to add more to their order
+        cin >> repeat;                                                   // Stores users choice in the variable 'repeat'
+
+    } while (repeat == 'y' || repeat == 'Y');                            // Runs the do-while loop if the condition 'y' is entered by the user
+
+    orderSummary(orders);                                                // Calls the orderSummary() function to display every order ordered - orders is the argument
+    displayTotal(total); 
+    // Calls the displayTotal() function to display that calculated cost of the entire order - total is the argument
+   
+    secondMenu();                                                        // Calls the secondMenu() function which will display another menu to the user
+}
+void secondMenu()                                                        // The secondMenu() function displays another menu to the user after they have added all items to their order
+{
+    int choice;                                                          // Declaring variable choice with type int
+    cout << endl;
+    cout << "How would you like to proceed?\n" << endl;
+    cout << "[1] Continue to Payment" << endl;                           // Choice 1 to continue to payment
+    cout << "[2] Cancel Order\n" << endl;                                // Choice 2 to cancel order
+    cout << "Please enter your choice: ";
+    cin >> choice;                                                       // Stores the user's input in variable 'choice'
+    cout << endl;
+
+    while (choice > 2 || choice < 1)                                     // While loop if the user inputs a choice less than one and greater than 2
+    {
+        cout << "Please enter a valid choice: ";                         // Tells the user to enter a valid choice
+        cin >> choice;                                                   // Stores the user's input in variable 'choice'
+    }
+
+    switch (choice)                                                      // Switch statement to execute the user's input choice
+    {
+    case 1:                                                              // Case 1 will execute if user selects option 1
+        payment();
+        break;
+
+    case 2:                                                              // Case 2 will execute if user selects option 2
+        // Go to user menu or exit? - if exit, implement below code
+        cout << endl;
+        cout << "Goodbye, have a great day....";
+        cout << endl;
+        break;
+    }
 }

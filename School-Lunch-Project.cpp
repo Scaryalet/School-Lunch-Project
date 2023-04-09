@@ -12,12 +12,10 @@ using namespace std;
 //Variables declared globally:
 int choice;
 bool found = false;
-
-double total = 0;  // declared globally so that all functions have access to it (payment function, process oder, display total)
+double total = 0;                                                                                       // declared globally so that all functions have access to it (payment function, process oder, display total)
 
 
 //Structures:
-
 struct CurrentOrder                                // Defining a struct called CurrentOrder (with struct name beginning with an uppercase letter)
 {
     string item;                                   // Structure member type string
@@ -30,10 +28,6 @@ struct CurrentOrder                                // Defining a struct called C
         cost = b;
     }
 };
-
-//Admin Structures
-
-
 struct LastOrder {
     string paymentMethod;
     string cost;
@@ -50,20 +44,16 @@ struct Users {
 Users user;
 
 
-
-
-
 //Vectors:
 vector<double> comboPrices = { 15.00, 13.50, 15.00 };
 vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
 vector<CurrentOrder> orders;                                                                             // Vector to call the information stored in CurrentOrders, called orders
-
 vector<double> itemPrices = { 8.00, 6.50, 5.00, 6.00, 3.00, 4.00 };                                      // Vector to store the item prices
 vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink" };          // Vector to store item names
 vector <Users> userList;
 
 
-// admin function prototypes
+//Admin function prototypes
 void adminMainScreen();
 void adminReviewOrders();
 void adminPullUserInfo();
@@ -72,9 +62,7 @@ void adminEditUsers();
 void adminRemoveUsers();
 void printHeading();
 void adminSaveUsersToFile();
-
 // order menu functions
-
 void displayMenu(CurrentOrder& order);                                  // '&' is used to pass by reference. Changes made to 'order' within the 'displayMenu' function will affect the CurrentOrder struct            
 void saveOrder();
 void displayOrder(CurrentOrder& order);                                 // '&' is used to pass by reference
@@ -137,54 +125,11 @@ int main()
     return 0;
 }
 
-
-
-void discountSearch(double& total)           //Function to search file for valid discount code
-{
-
-    string discount;
-    ifstream infile("discountCodes.txt");
-    bool found = false; // variable to check if valid code is found
-    static bool discountApplied = false; // Variable to track if code already applied
-
-    if (infile) {
-        string line;
-        cin >> discount;
-
-        while (getline(infile, line)) {
-            if (line.find(discount) != string::npos) {
-                if (!discountApplied) { // check if a discount has already been applied
-                    double discountAmount = total * 0.05;
-                    total -= discountAmount;
-                    cout << "A 5% discount has been applied to your order!\n\n";
-                    discountApplied = true;
-                }
-                else {
-                    cout << "Discount code already applied to this order!\n\n";
-                }
-                found = true;
-                break;
-            }
-        }
-
-        infile.close();
-    }
-
-    if (!found) {
-        cout << "Invalid discount code, Please try again.\n\n";
-    }
-
-    orders.push_back(total);
-}
-
-
-
 void printHeading() {
     cout << "****************************" << endl;
     cout << "SCHOOL LUNCH ORDERING SYSTEM" << endl;
     cout << "****************************" << endl << endl;
 }
-
 
 
 //signup-login functions defined:
@@ -298,7 +243,6 @@ void login()            // Function to log in to an existing account
     }
 }
 // Function for admin login
-
 void adminLogin()
 {
     system("cls");
@@ -384,12 +328,10 @@ void adminPullUserInfo() {
             }
         }
     }
-
     users.close();  //closes users.txt file
     orders.close(); //closes order.txt file
 }
 //Prints admin main menu, gives options that admin can choose from.
-
 void adminMainScreen() {
     system("cls");  //Clears screen to make console easier to read.
     printHeading(); //Calls function to print main heading
@@ -423,7 +365,6 @@ void adminMainScreen() {
         exit(0);
     }
 }
-
 //Prints user list, admin can choose a user from this list to view their last order.
 void adminReviewOrders() {
     cin.ignore();   //Used to clear input stream for the getline code further down.
@@ -625,7 +566,6 @@ void adminAddUsers() {
         }
     }
 }
-
 //Prints user list, admin can choose a user then edit their information. Updates vector and overwrites the file
 void adminEditUsers() {
     system("cls"); //clears screen to make console easier to read.
@@ -729,9 +669,7 @@ void adminEditUsers() {
         adminMainScreen();
     }
 }
-
 //Prints list of all users, admin can choose a user, then remove that user from the app by deleting them from the file.
-
 void adminRemoveUsers() {
     ofstream file("users.txt", ios::trunc); //Opens file to overwrite contents.
     string temp;
@@ -798,7 +736,6 @@ void adminSaveUsersToFile() {
     for (int i = 0; i < userList.size(); i++) {
         file << userList[i].username << endl << userList[i].password << endl << userList[i].fname << endl <<
             userList[i].lastName << endl << userList[i].roomNum << endl << endl;
-
     }
     file.close();
 }
@@ -982,7 +919,6 @@ void secondMenu()                                                        // The 
         break;
     }
 }
-
 void comboMenu(CurrentOrder& order)
 {
     int choice;
@@ -1104,4 +1040,40 @@ void payment() {            //function for payment section
         }
     } while (choice != 3);
 }
+void discountSearch(double& total)           //Function to search file for valid discount code
+{
 
+    string discount;
+    ifstream infile("discountCodes.txt");
+    bool found = false; // variable to check if valid code is found
+    static bool discountApplied = false; // Variable to track if code already applied
+
+    if (infile) {
+        string line;
+        cin >> discount;
+
+        while (getline(infile, line)) {
+            if (line.find(discount) != string::npos) {
+                if (!discountApplied) { // check if a discount has already been applied
+                    double discountAmount = total * 0.05;
+                    total -= discountAmount;
+                    cout << "A 5% discount has been applied to your order!\n\n";
+                    discountApplied = true;
+                }
+                else {
+                    cout << "Discount code already applied to this order!\n\n";
+                }
+                found = true;
+                break;
+            }
+        }
+
+        infile.close();
+    }
+
+    if (!found) {
+        cout << "Invalid discount code, Please try again.\n\n";
+    }
+
+    orders.push_back(total);
+}

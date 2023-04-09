@@ -14,9 +14,9 @@ MAIN MENU:
 
 ADMIN MENU:
 •	View orders/Generate receipts
-•	Change user password
+•	Change user details
 •	New registrations (with the ability to approve or decline a user depending on whether they are relevant to the system)
-•	Add, remove or block users for various reasons
+•	Remove users for various reasons
 
 USER MENU:
 •	View menu items and add items to order

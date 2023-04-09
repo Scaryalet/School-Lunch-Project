@@ -9,7 +9,6 @@
 using namespace std;
 
 
-
 int choice;
 bool found = false;
 double total = 0;  // declared globally so that all functions have access to it (payment function, process oder, display total)
@@ -44,14 +43,13 @@ struct Users {
 Users user;
 
 
-
-
 vector<double> comboPrices = { 15.00, 13.50, 15.00 };
 vector<string> comboNames = { "sandwich Combo", "Hot Dog Combo", "Salad Combo" };
 vector<CurrentOrder> orders;
 vector<double> itemPrices = { 8.00, 6.50, 5.00, 6.00, 3.00, 4.00 };                                      // Vector to store the item prices
 vector<string> itemNames = { "Sandwich", "Hot Dog", "Chips", "Salad", "Water", "Fizzy Drink" };          // Vector to store item names
 vector <Users> userList;
+
 
 // admin function prototypes
 void adminMainScreen();
@@ -79,7 +77,6 @@ void adminLogin();
 // Payment function prototypes
 void discountSearch(double& total);
 void payment();
-
 
 
 int main()
@@ -128,41 +125,9 @@ int main()
 
 
 
-//payment functions defined:
 void discountSearch(double& total)           //Function to search file for valid discount code
 {
-    string discount;
-    bool found = false;
-    ifstream infile("discountCodes.txt");
-    cin >> discount;
-    if (infile)
-    {
-        string line;
 
-        while (getline(infile, line))
-        {
-            if (line.find(discount) != string::npos)
-            {
-                found = true;
-                double discountAmount = total * 0.05;
-                total -= discountAmount;
-                cout << "A 5% discount has been applied to your order!\n\n";
-                break;
-            }
-        }
-
-        infile.close();
-    }
-
-    if (!found)
-    {
-        cout << "Invalid discount code, Please try again.\n\n";
-    }
-    orders.push_back(total);
-
-}
-
-void discountSearch(double& total) {
     string discount;
     ifstream infile("discountCodes.txt");
     bool found = false; // variable to check if valid code is found
@@ -476,9 +441,8 @@ void comboMenu(CurrentOrder& order)
 //Admin functions defined:
 void adminPullUserInfo() {
     // when admin logs in
-
-    ifstream users("users.txt");
-    ifstream orders("orders.txt");
+    ifstream orders("order.txt"); //opens the order.txt file to read from
+    ifstream users("users.txt"); //opens the users.txt file to read from.
     string line;
     string fname, lname, username, password;
     int roomNum;
@@ -492,7 +456,6 @@ void adminPullUserInfo() {
             user.fname = fname;
             user.lastName = lname;
             user.roomNum = roomNum;
-            ifstream orders("order.txt");
             if (orders.is_open()) { // check if open
                 // pulling that users last order from orders.txt
                 while (getline(orders, line)) { // read line by line
@@ -518,6 +481,7 @@ void adminPullUserInfo() {
         }
     }
     users.close();
+    orders.close();
 }
 void adminMainScreen() {
 
@@ -562,7 +526,7 @@ void adminMainScreen() {
 void adminReviewOrders() {
     cin.ignore(); //used to clear input stream for following getline code.
     
-    system("cls"); //clears screen
+    system("cls"); //clears screen to make the console easier to read
     printHeading();//prints main heading
 
     cout << "Review Orders" << endl;
@@ -572,21 +536,21 @@ void adminReviewOrders() {
     int count = 0;
     for (int i = 0; i < userList.size(); i++) {
         
-        if (userList[i].lastOrder.pastOrderItems.size() > 0) {
+        if (userList[i].lastOrder.pastOrderItems.size() > 0) { //if users are found with a past order, then they are printed.
             cout << userList[i].fname << " " << userList[i].lastName << ", class " << userList[i].roomNum << endl;
             count++;
         }
     }
-    if (count == 0) {
+    if (count == 0) { //if no users are found with a past order, than app tells admin, then returns to main menu.
         cout << "No users with orders found, returning you to the main menu" << endl << endl;
         system("pause");
         adminMainScreen();
     }
     cout << endl << endl << "Enter 1 to review a users order or 2 to go back to main menu: ";
 
-    string choice;
-    
-    getline(cin, choice);
+    string choice; //choice is set to a string due to bug found when using an int variable. The app would go in an infinite loop if a name was accidently
+                   // put in this input.
+    getline(cin, choice); //getline is used as well to fix the bug mentioned above.
 
     while (choice == "1" || choice == "2") {
         if (choice == "1") {
@@ -605,10 +569,11 @@ void adminReviewOrders() {
                     cout << "Order for " << userList[i].fname << " " << userList[i].lastName << endl;
                     cout << "Class: " << userList[i].roomNum << endl << endl;
                     for (int j = 0; j < userList[i].lastOrder.pastOrderItems.size(); j++) { // loop through chosen users last order items
-                        cout << userList[i].lastOrder.pastOrderItems[j] << endl; // print order items
+                        cout << userList[i].lastOrder.pastOrderItems[j] << endl; // prints order items
                     }
-                    cout << "Total: $" << userList[i].lastOrder.cost << endl;
-                    cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; // print payment method  
+                    cout << "Total: $" << userList[i].lastOrder.cost << endl; //prints total.
+                    cout << "Payment Method: " << userList[i].lastOrder.paymentMethod << endl << endl; // prints payment method
+
                     // review another order or go back to main menu
                     int option = NULL;
                     while (option != 1 && option != 2) {
@@ -645,7 +610,7 @@ void adminReviewOrders() {
 }
 void adminAddUsers() {
     string temp;
-    struct NewUser {
+    struct NewUser { //struct to store new user information.
         string username;
         string password;
         string fName;
@@ -653,12 +618,12 @@ void adminAddUsers() {
         string classNum;
     };
 
-    vector <NewUser> usersToApprove;
+    vector <NewUser> usersToApprove; //vector which uses NewUser struct.
 
-    ifstream newUserFile("newUsers.txt");
+    ifstream newUserFile("newUsers.txt"); //opens newUsers.txt file and reads from it.
     string u, p, f, l, c;
 
-    system("cls");
+    system("cls"); //clears screen.
 
     if (newUserFile.is_open()) {
 
@@ -807,7 +772,7 @@ void adminEditUsers() {
     getline(cin, temp);
     string first, last;
 
-    ofstream file("users.txt", ios::app);
+    ofstream file("users.txt", ios::app); //opens user.txt file to write to it.
 
     while (temp != "1") {
 
@@ -834,7 +799,7 @@ void adminEditUsers() {
                 cin >> option1;
                 string tempUserName, tempPassword, tempLName;
                 int tempClassNum;
-                switch (option1) {
+                switch (option1) { //switch case for the different options that admin can choose from.
                 case 1:
                     cout << "Enter new username: ";
                     cin >> tempUserName;

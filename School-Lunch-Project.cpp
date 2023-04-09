@@ -124,23 +124,31 @@ int main()
 }
 
 
+
 void discountSearch(double& total)           //Function to search file for valid discount code
 {
+
     string discount;
     ifstream infile("discountCodes.txt");
-    if (infile)
-    {
-        string line;
+    bool found = false; // variable to check if valid code is found
+    static bool discountApplied = false; // Variable to track if code already applied
 
-        while (getline(infile, line))
-        {
-            if (line.find(discount) != string::npos)
-            {
+    if (infile) {
+        string line;
+        cin >> discount;
+
+        while (getline(infile, line)) {
+            if (line.find(discount) != string::npos) {
+                if (!discountApplied) { // check if a discount has already been applied
+                    double discountAmount = total * 0.05;
+                    total -= discountAmount;
+                    cout << "A 5% discount has been applied to your order!\n\n";
+                    discountApplied = true;
+                }
+                else {
+                    cout << "Discount code already applied to this order!\n\n";
+                }
                 found = true;
-                // Code to apply discount goes here, Waiting on orderTotal function.
-                double discountAmount = total * 0.05;
-                total -= discountAmount;
-                cout << "A 5% discount has been applied to your order!\n\n";
                 break;
             }
         }
@@ -148,12 +156,11 @@ void discountSearch(double& total)           //Function to search file for valid
         infile.close();
     }
 
-    if (!found)
-    {
+    if (!found) {
         cout << "Invalid discount code, Please try again.\n\n";
     }
-    orders.push_back(total);
 
+    orders.push_back(total);
 }
 
 void payment() {            //function for payment section
@@ -187,7 +194,6 @@ void payment() {            //function for payment section
         case 1:
             cout << "Use discount code YouGetAnA+ for 5% off your order! \n";
             cout << "Please enter your discount code: \n";
-            cin >> discount;
             discountSearch(total);
             break;
 

@@ -965,15 +965,14 @@ void displayMenu(CurrentOrder& order)                           // The displayMe
         break;
 
     case 7:                                                                            // If option 7 is selected, it will call the comboMenu() function to display the combo options
-        // Call combo function
+        comboMenu();
         break;
 
     case 8:                                                                            // If option 8 is selected by the user,  it will exit out of the food menu
-        // Return to previous menu, or cancel - if cancel, implement below code
         cout << endl;
         cout << "Goodbye, have a great day....";
         cout << endl;
-        break;
+        Return 0;
     }
 
     if (choice >= 1 && choice <= 6)                                                    // If statement using logical AND operator. To check if user choice is greater or equal to 1 and if choice is less than or equal to 6. If condition is true, the below code will run
@@ -1076,7 +1075,6 @@ void secondMenu()                                                        // The 
         break;
 
     case 2:                                                              // Case 2 will execute if user selects option 2
-        // Go to user menu or exit? - if exit, implement below code
         cout << endl;
         cout << "Goodbye, have a great day....";
         cout << endl;
